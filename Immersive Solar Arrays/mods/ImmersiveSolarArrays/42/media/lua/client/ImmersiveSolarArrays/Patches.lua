@@ -25,8 +25,20 @@ local function sendCommand(character, command, args)
     instance:sendCommand(character, command, args)
 end
 
-local function xyz(object)
-    return { x = object:getX(), y = object:getY(), z = object:getZ() }
+--- Coordinates of a world object, for sending to the server.
+---@param isoObject IsoObject
+local function isoXYZ(isoObject)
+    return { x = isoObject:getX(), y = isoObject:getY(), z = isoObject:getZ() }
+end
+
+--- Coordinates of a powerbank's Lua object.
+---
+--- Deliberately separate from isoXYZ. A CGlobalObject carries x, y and z as plain
+--- fields and has no accessors at all, so calling getX on one throws, and the two are
+--- easy to confuse because in this file both are "the powerbank".
+---@param luaObject PowerBankObject_Client
+local function luaXYZ(luaObject)
+    return { x = luaObject.x, y = luaObject.y, z = luaObject.z }
 end
 
 ---@param character IsoPlayer
@@ -43,7 +55,7 @@ local function onPlugGenerator(character, generator, plug)
         local area = ISA.WorldUtil.getValidBackupArea(character:getPerkLevel(Perks.Electricity))
         local luaPowerbanks = ISA.WorldUtil.getPowerBanksInArea(square, area.radius, area.levels, area.distance)
         for i = 1, #luaPowerbanks do
-            table.insert(pbList, xyz(luaPowerbanks[i]))
+            table.insert(pbList, luaXYZ(luaPowerbanks[i]))
         end
     else
         -- Unplugging has no range check: every bank pointing at this generator drops it.
@@ -52,13 +64,13 @@ local function onPlugGenerator(character, generator, plug)
             local pb = instance:getLuaObjectByIndex(i)
             local con = pb.conGenerator
             if con and con.x == x and con.y == y and con.z == z then
-                table.insert(pbList, xyz(pb))
+                table.insert(pbList, luaXYZ(pb))
             end
         end
     end
 
     if pbList[1] == nil then return end
-    sendCommand(character, "plugGenerator", { pbList = pbList, gen = xyz(generator), plug = plug })
+    sendCommand(character, "plugGenerator", { pbList = pbList, gen = isoXYZ(generator), plug = plug })
 end
 
 ---@param character IsoPlayer
@@ -73,7 +85,7 @@ local function onActivateGenerator(character, generator, activate)
         local pb = instance:getLuaObjectByIndex(i)
         local con = pb.conGenerator
         if con and con.x == x and con.y == y and con.z == z then
-            sendCommand(character, "activateGenerator", { pb = xyz(pb), activate = activate })
+            sendCommand(character, "activateGenerator", { pb = luaXYZ(pb), activate = activate })
         end
     end
 end
@@ -95,10 +107,10 @@ local function onTransferItem(character, item, srcContainer, destContainer)
     local charge = capacity * item:getCurrentUsesFloat()
 
     if take then
-        sendCommand(character, "moveBattery", { xyz(src), "take", charge, capacity })
+        sendCommand(character, "moveBattery", { isoXYZ(src), "take", charge, capacity })
     end
     if put then
-        sendCommand(character, "moveBattery", { xyz(dst), "put", charge, capacity })
+        sendCommand(character, "moveBattery", { isoXYZ(dst), "put", charge, capacity })
     end
 end
 
