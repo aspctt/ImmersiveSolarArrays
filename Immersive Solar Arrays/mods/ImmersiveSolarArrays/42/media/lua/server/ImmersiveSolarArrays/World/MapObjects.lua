@@ -1,6 +1,15 @@
 local ISA = require "ImmersiveSolarArrays/Utilities"
 local RandomWorldSpawns = require "ImmersiveSolarArrays/World/RandomWorldSpawns"
 
+--- The failsafe goes down as a floor rug, which is the only way it can be placed on a
+--- tile a generator already occupies, and that also buries it under the generator when
+--- the square is drawn. Lifting it on every chunk load keeps it visible, and repairs the
+--- ones already sitting in a world.
+local function LoadFailsafe(isoObject)
+    ISA.WorldUtil.raiseToTopOfSquare(isoObject)
+end
+MapObjects.OnLoadWithSprite("solarmod_tileset_01_15", LoadFailsafe, 6)
+
 if isClient() then
 
     ---update isoObjects when chunk loads

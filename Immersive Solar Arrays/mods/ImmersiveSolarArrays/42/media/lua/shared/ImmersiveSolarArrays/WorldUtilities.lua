@@ -69,6 +69,34 @@ function WorldUtil.getPowerBanksInArea(square, radius, zLevels, distance)
     return all
 end
 
+--- Move an object to the end of its square's list, so it draws over whatever shares the
+--- tile with it.
+---
+--- The failsafe is placed with MoveType = FloorRug, which is what lets it go down on a
+--- square that already holds a generator: the placement code waives the "something solid
+--- is here" rule for rugs. The same flag inserts it just above the floor, so a generator
+--- on the same tile draws straight over the top of it.
+---
+--- Dropping the rug type would fix the drawing and break the placing, so the object goes
+--- down as a rug and is lifted afterwards. Neither call raises a Lua event, so this does
+--- not re-enter whatever is calling it.
+---
+--- Ordering only, no transmit. Each machine sorts its own copy out when the object is
+--- added or the chunk loads, rather than trying to resend an object the other end
+--- already has.
+---@param isoObject IsoObject
+function WorldUtil.raiseToTopOfSquare(isoObject)
+    local square = isoObject and isoObject:getSquare()
+    if not square then return end
+
+    local objects = square:getObjects()
+    if not objects or objects:size() < 2 then return end
+    if isoObject:getObjectIndex() == objects:size() - 1 then return end
+
+    square:RemoveTileObject(isoObject)
+    square:AddSpecialObject(isoObject, square:getObjects():size())
+end
+
 function WorldUtil.findOnSquare(square,sprite)
     local special = square:getSpecialObjects()
     for i = 0, special:size()-1 do

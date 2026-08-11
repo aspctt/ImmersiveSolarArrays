@@ -60,6 +60,10 @@ function PBSystem:OnObjectAdded(isoObject)
         modData.pbLinked = nil
         modData.connectDelta = nil
         isoObject:transmitModData()
+    elseif isaType == "Failsafe" then
+        -- It shares a tile with the generator it triggers, so without this the generator
+        -- draws over it.
+        ISA.WorldUtil.raiseToTopOfSquare(isoObject)
     end
 end
 
@@ -151,7 +155,9 @@ function PBSystem.updatePowerbanks()
         pb:updateConGenerator()
         pb:saveData(true)
 
-        if self.wantNoise then self:noise(string.format("/charge: (%d) Battery at: %d %%, charge dif: %.1f, output: %.1f, drain: %.1f",i,modCharge*100,dCharge,pb.npanels*solaroutput,drain)) end
+        if PBSystem.wantChargeNoise then
+            self:noise(string.format("/charge: (%d) Battery at: %d %%, charge dif: %.1f, output: %.1f, drain: %.1f",i,modCharge*100,dCharge,pb.npanels*solaroutput,drain))
+        end
     end
 end
 
