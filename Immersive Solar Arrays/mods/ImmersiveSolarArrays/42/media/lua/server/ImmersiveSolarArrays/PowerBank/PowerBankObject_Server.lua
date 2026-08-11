@@ -444,11 +444,23 @@ function PowerBank:updateConGenerator()
         conGenerator:update()
 
         if self.on and ISA.WorldUtil.findOnSquare(square, "solarmod_tileset_01_15") then
+            -- The threshold is one hour of load, so the backup stops once the bank holds
+            -- enough to carry the base on its own for an hour.
+            --
+            -- Recomputed here rather than read off the field. The bank does not drain
+            -- while the backup is running, so updateDrain is not called during that time
+            -- and self.drain stays frozen at whatever the load was when the generator
+            -- started. Turning appliances off while it ran left the generator running
+            -- against a number that had stopped being true.
+            self:updateDrain()
             local minfailsafe = self.drain
+
             if conGenerator:isActivated() then
-                if self.charge > minfailsafe then conGenerator:setActivated(false)end
+                if self.charge > minfailsafe then conGenerator:setActivated(false) end
             else
-                if self.charge < minfailsafe and conGenerator:getFuel() > 0 and conGenerator:getCondition() > 20 then conGenerator:setActivated(true) end
+                if self.charge < minfailsafe and conGenerator:getFuel() > 0 and conGenerator:getCondition() > 20 then
+                    conGenerator:setActivated(true)
+                end
             end
         end
         self.lastHour = currentHour

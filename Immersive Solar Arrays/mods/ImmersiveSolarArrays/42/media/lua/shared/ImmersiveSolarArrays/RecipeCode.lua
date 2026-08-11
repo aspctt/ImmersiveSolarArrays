@@ -85,12 +85,24 @@ end
 ----------------------------------------------------------------------------------------
 --- Container filter
 
-AcceptItemFunction = AcceptItemFunction or {}
-
 --- Only things the powerbank can actually charge go in the battery bank.
-function AcceptItemFunction.ISA_Batteries(container, item)
+local function acceptBatteries(container, item)
     return item:getModData().ISA_maxCapacity ~= nil
 end
+
+--- Registered on an event rather than at file scope.
+---
+--- Vanilla creates the table with a plain `AcceptItemFunction = {}` in
+--- media/lua/server/Items/AcceptItemFunction.lua, and the server folder is loaded after
+--- every shared file. Registering on load put the function in a table that vanilla then
+--- replaced, so the game logged `no such function "AcceptItemFunction.ISA_Batteries"`
+--- every time a battery bank container was touched, and the bank accepted anything.
+local function registerAcceptItemFunction()
+    AcceptItemFunction = AcceptItemFunction or {}
+    AcceptItemFunction.ISA_Batteries = acceptBatteries
+end
+
+Events.OnInitGlobalModData.Add(registerAcceptItemFunction)
 
 ----------------------------------------------------------------------------------------
 --- OnCreate
