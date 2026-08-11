@@ -396,6 +396,52 @@ if declared:
 
 
 # ---------------------------------------------------------------------------------------
+# Method names
+#
+# Every `:name(` in the mod has to be a method the engine exposes, a function the mod or
+# the game defines in Lua, or a Lua string method. PropertyContainer.Is and .Val were
+# real in build 41 and are gone in build 42, and Lua calling a method that is not there
+# does not fail until the line runs, so placing a battery bank threw every single time
+# and nothing caught it before the game did.
+#
+# Names only. A call site does not say what type it is calling on, so the check is
+# whether the name exists anywhere in the API rather than on the right class. That still
+# catches a method the engine has retired, which is the case that keeps happening.
+
+api_names_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "..", "build", "api-names.txt")
+if os.path.exists(api_names_file):
+    api_names = set(read(api_names_file).split())
+
+    # Methods defined in Lua rather than by the engine, from the game and from the mod.
+    lua_defined = set()
+    lua_sources = list(MOD_LUA)
+    for folder in ("client", "server", "shared"):
+        lua_sources.extend(walk(os.path.join(GAME, "media", "lua", folder), ".lua"))
+    for path in lua_sources:
+        body = strip_lua_comments(read(path))
+        lua_defined.update(re.findall(r"function\s+[A-Za-z0-9_.:]+[.:]([A-Za-z0-9_]+)\s*\(", body))
+        lua_defined.update(re.findall(r"([A-Za-z0-9_]+)\s*=\s*function\s*\(", body))
+        lua_defined.update(re.findall(r"\[\"([A-Za-z0-9_]+)\"\]\s*=\s*function", body))
+
+    # Lua's own string methods, reachable on any string the engine hands back.
+    lua_builtin = {"len", "sub", "gsub", "gmatch", "find", "match", "format", "rep",
+                   "byte", "char", "lower", "upper", "reverse", "split", "trim",
+                   "contains", "indexOf", "startsWith", "endsWith"}
+
+    known_methods = api_names | lua_defined | lua_builtin
+    for path in MOD_LUA:
+        body = strip_lua_comments(read(path))
+        for name in sorted(set(re.findall(r":([A-Za-z_][A-Za-z0-9_]*)\s*\(", body))):
+            counted("method calls")
+            if name not in known_methods:
+                fail("method-name", "%s: :%s() is not a method this build exposes"
+                     % (rel(path), name))
+else:
+    note("build/api-names.txt not built, method name check skipped")
+
+
+# ---------------------------------------------------------------------------------------
 # Requires
 
 game_lua_modules = set()
@@ -412,13 +458,54 @@ for path in MOD_LUA:
         if base in normalised:
             mod_lua_modules.add(normalised.split(base, 1)[1][:-4].lower())
 
-REQUIRE = re.compile(r'require\s*[("]\s*"?([A-Za-z0-9_!~/\-.]+)"')
+# Modules that come from a separate mod the player installs. Not in this repository,
+# because that mod is not ours to redistribute, and not in the game either.
+#
+# Two gates rather than a bare allowlist. The mod that provides it has to still be
+# declared in mod.info, so dropping the dependency cannot go unnoticed, and if a copy
+# happens to be sitting in original-mods the module name is checked against it, so a
+# typo in the require is caught rather than waved through.
+EXTERNAL_MODULES = {
+    "!_targetsquare_onload": "TargetSquareOnLoad",
+}
+
+# Local reference copies of other people's mods, kept out of the published tree.
+reference_modules = set()
+reference_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
+                              "original-mods")
+if os.path.isdir(reference_root):
+    for path in walk(reference_root, ".lua"):
+        normalised = path.replace("\\", "/")
+        for folder in ("/lua/client/", "/lua/server/", "/lua/shared/"):
+            if folder in normalised:
+                reference_modules.add(normalised.split(folder, 1)[1][:-4].lower())
+
+declared_requires = set()
+for root in MOD_ROOTS:
+    for info in walk(root, "mod.info"):
+        for match in re.finditer(r"^require=(.+)$", read(info), flags=re.M):
+            for mod_id in match.group(1).replace("\\", "").split(","):
+                declared_requires.add(mod_id.strip())
+
 for path in MOD_LUA:
     body = strip_lua_comments(read(path))
     for module in set(re.findall(r'require\s*"([^"]+)"', body)):
         counted("requires")
         key = module.lower()
         if key in mod_lua_modules or key in game_lua_modules:
+            continue
+        provider = EXTERNAL_MODULES.get(key)
+        if provider:
+            if provider not in declared_requires:
+                fail("require-undeclared",
+                     "%s: require \"%s\" comes from %s, which no mod.info declares in require="
+                     % (rel(path), module, provider))
+            elif reference_modules and key not in reference_modules:
+                fail("require-external",
+                     "%s: require \"%s\" is not a module the reference copy of %s provides"
+                     % (rel(path), module, provider))
+            else:
+                counted("external requires")
             continue
         fail("require-path", "%s: require \"%s\" resolves to no lua file" % (rel(path), module))
 

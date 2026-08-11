@@ -54,7 +54,9 @@ end
 ---@return IsoObject
 function RandomWorldSpawns.placePowerBank(square, spriteName, index)
     local sprite = getSprite(spriteName)
-    local fullType = sprite:getProperties():Is("CustomItem") and sprite:getProperties():Val("CustomItem")
+    -- PropertyContainer lost Is and Val in build 42; they are has and get now.
+    local props = sprite:getProperties()
+    local fullType = props:has("CustomItem") and props:get("CustomItem")
                      or ("Moveables." .. spriteName)
 
     local object = IsoGenerator.new(square:getCell())

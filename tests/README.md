@@ -11,6 +11,10 @@ the JRE the game ships cannot compile the Lua checker.
 
 ## What it does
 
+**Pass zero, the API list.** `harness/DumpApi.java` writes every public method name in
+`projectzomboid.jar` to `build/api-names.txt`, rebuilt whenever the game updates. Around
+50,000 names from 23,000 classes.
+
 **Pass one, syntax.** `projectzomboid.jar` contains Kahlua, the Lua 5.1 VM the game runs
 mods on. `harness/CheckLua.java` boots that compiler outside the game and parses every
 mod Lua file with it. Because it is the shipped compiler, the check tracks the game
@@ -37,7 +41,9 @@ nothing, and a tag no item carries makes a recipe quietly impossible to perform.
 | `sandbox-type` | Option types are among the five the parser accepts. |
 | `sandbox-label` | Every option, page and enum value has its label in `Sandbox.json`. Neither mistake crashes: the option is silently dropped or renders as a raw key. |
 | `sandbox-var` | Every `SandboxVars.ISA.x` the Lua reads is a declared option. |
+| `method-name` | Every `:name(` is a method this build exposes, a function the mod or game defines in Lua, or a Lua string method. `PropertyContainer.Is` and `.Val` were real in build 41 and are gone in build 42; Lua calling a method that is not there does not fail until the line runs, so placing a battery bank threw every single time and nothing noticed until the game did. Names only, not per class, since a call site does not say what type it is calling on. |
 | `require-path` | Every `require` resolves to a Lua file in the mod or the game. Case matters on Linux servers, and the build 41 tree had several that pointed at moved files. |
+| `require-undeclared` | A require into a separate mod is only allowed while `mod.info` still declares that mod in `require=`, so dropping the dependency cannot go unnoticed. |
 
 ## Calibration
 
@@ -47,5 +53,5 @@ Run the same checks against `original-mods/`, which holds the unmodified upstrea
 python tests/harness/check.py "<game dir>" "original-mods/Immersive Solar Arrays/mods/ImmersiveSolarArrays/42.1" "original-mods/Immersive Solar Arrays/mods/ImmersiveSolarArrays/common"
 ```
 
-That reports around 160 problems, which is what these checks were written from. The
+That reports around 165 problems, which is what these checks were written from. The
 current tree reports none.

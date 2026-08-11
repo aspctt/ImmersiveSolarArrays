@@ -100,7 +100,9 @@ function WorldUtil.replaceIsoObjectWithGenerator(isoObject)
     local index = isoObject:getObjectIndex()
     ---TODO check earlier
     if not square or index == -1 then return IsoGenerator.new(getCell()) end
-    local fullType = isoObject:getSprite():getProperties():Is("CustomItem") and isoObject:getSprite():getProperties():Val("CustomItem") 
+    -- PropertyContainer lost Is and Val in build 42; they are has and get now.
+    local props = isoObject:getSprite():getProperties()
+    local fullType = props:has("CustomItem") and props:get("CustomItem")
                      or ("Moveables." .. isoObject:getTextureName())
     square:transmitRemoveItemFromSquare(isoObject)
     -- local generator = IsoGenerator.new(instanceItem("ISA.PowerBank"), square:getCell(), square)

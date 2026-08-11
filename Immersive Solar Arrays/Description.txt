@@ -11,9 +11,9 @@ Support for build 41 has been dropped.
 
 Build 42.20 or newer.
 
-[b]Target Square: On Load Commands[/b] is needed for the pre-placed crates that spawn
-around the map. Without it the rest of the mod still works, you just do not get those
-crates. It is safe to add or remove on an existing save.
+[b][URL=https://steamcommunity.com/sharedfiles/filedetails/?id=2969455858]Target Square: On Load Commands[/URL][/b] is needed for the pre-placed crates that
+spawn around the map. Without it the rest of the mod still works, you just do not get
+those crates. It is safe to add or remove on an existing save.
 
 [h1]How it works[/h1]
 

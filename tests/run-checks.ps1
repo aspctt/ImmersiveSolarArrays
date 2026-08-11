@@ -61,8 +61,7 @@ $Build   = Join-Path $PSScriptRoot 'build'
 $ModRoots = @(
     Join-Path $Root 'Immersive Solar Arrays\mods\ImmersiveSolarArrays\42'
     Join-Path $Root 'Immersive Solar Arrays\mods\ImmersiveSolarArrays\common'
-    Join-Path $Root 'Target Square On Load Commands\mods\TargetSquareOnLoad\42'
-)
+) | Where-Object { Test-Path $_ }
 
 $VersionFile = Join-Path $env:USERPROFILE 'Zomboid\version.txt'
 $Build42 = if (Test-Path $VersionFile) { (Get-Content $VersionFile | Select-Object -First 1) } else { 'unknown' }
@@ -73,16 +72,30 @@ Write-Host ""
 
 # --- pass 1: does the game's own compiler accept every file ------------------
 
-$JdkBin    = Find-Jdk
-$Javac     = Join-Path $JdkBin 'javac.exe'
-$Java      = Join-Path $JdkBin 'java.exe'
-$RunnerSrc = Join-Path $Harness 'CheckLua.java'
-$RunnerCls = Join-Path $Build 'CheckLua.class'
+$JdkBin = Find-Jdk
+$Javac  = Join-Path $JdkBin 'javac.exe'
+$Java   = Join-Path $JdkBin 'java.exe'
 
 New-Item -ItemType Directory -Force -Path $Build | Out-Null
-if (-not (Test-Path $RunnerCls) -or (Get-Item $RunnerSrc).LastWriteTime -gt (Get-Item $RunnerCls).LastWriteTime) {
-    & $Javac -nowarn -cp $Jar -d $Build $RunnerSrc
-    if ($LASTEXITCODE -ne 0) { throw "Failed to compile CheckLua.java" }
+
+function Build-Tool([string]$Name) {
+    $src = Join-Path $Harness "$Name.java"
+    $cls = Join-Path $Build "$Name.class"
+    if (-not (Test-Path $cls) -or (Get-Item $src).LastWriteTime -gt (Get-Item $cls).LastWriteTime) {
+        & $Javac -nowarn -cp $Jar -d $Build $src
+        if ($LASTEXITCODE -ne 0) { throw "Failed to compile $Name.java" }
+    }
+}
+
+Build-Tool 'CheckLua'
+Build-Tool 'DumpApi'
+
+# The list of method names the engine exposes, rebuilt whenever the game updates. The
+# cross-reference pass checks every `:name(` in the mod against it.
+$ApiNames = Join-Path $Build 'api-names.txt'
+if (-not (Test-Path $ApiNames) -or (Get-Item $Jar).LastWriteTime -gt (Get-Item $ApiNames).LastWriteTime) {
+    & $Java -cp "$Build;$Jar" DumpApi $Jar $ApiNames
+    if ($LASTEXITCODE -ne 0) { throw "Failed to dump the game API" }
 }
 
 $LuaFiles = $ModRoots |

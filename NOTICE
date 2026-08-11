@@ -60,8 +60,19 @@ and every file that was changed carries the change in its own history.
 
 THIRD-PARTY COMPONENTS
 
+None. Nothing in this repository is anyone else's work except the Immersive
+Solar Arrays source this is derived from, covered above.
+
+
+SOFT DEPENDENCY
+
   Target Square: On Load Commands
-    By Poltergeist. Steam Workshop 2969455858. Distributed alongside this mod
-    because the world spawns depend on it. The author asks that it not be
-    re-uploaded; if you redistribute this fork, link to the original rather than
-    bundling it.
+    By Poltergeist. Steam Workshop 2969455858.
+
+    Not bundled and not modified. The author asks that it not be re-uploaded,
+    so players install it themselves and this mod only calls its API.
+
+    The world spawn system uses it to place crates when a square first loads.
+    The call is a soft require: without the mod the crates do not spawn and
+    everything else works unchanged. It is declared in mod.info as
+    require=TargetSquareOnLoad.
