@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Vyrobte si vlastní baterii",
+    "ISA_WireCarBattery": "Drátová autobaterie",
+    "ISA_UnwireCarBattery": "Odpojte autobaterii",
+    "ISA_MakeSolarRoofTile": "Vytvořte plochý solární panel",
+    "ISA_MakeWallSolarPanel": "Vyrobte nástěnný solární panel",
+    "ISA_MakeFloorSolarPanel": "Vyrobte solární panel na podlahu",
+    "ISA_ReverseSolarPanel": "Rozdělte solární panel na části",
+    "ISA_CreateBatteryBank": "Vytvořte bateriovou banku",
+    "ISA_CreateSolarFailsafe": "Vytvořte Solar Failsafe",
+    "ISA_MakeSolarPanel": "Vyrobte solární panel (část)",
+    "ISA_MakeInverter": "Vytvořte střídač"
+}

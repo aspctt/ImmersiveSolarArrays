@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nouvelles Avancées : De l'énergie à partir du soleil",
+    "ISA.SolarPanel": "Panneau photovoltaïque (pièce)",
+    "ISA.ISAInverter": "Onduleur",
+    "ISA.DeepCycleBattery": "Batterie - 200Ah",
+    "ISA.SuperBattery": "Batterie - 400Ah",
+    "ISA.WiredCarBattery": "Batterie de voiture filaire",
+    "ISA.DIYBattery": "Batterie artisanale",
+    "ISA.PowerBank": "Batterie d'accumulateurs",
+    "ISA.SolarPanelFlat": "Panneau photovoltaïque plat",
+    "ISA.SolarPanelWall": "Panneau photovoltaïque mural",
+    "ISA.SolarPanelMounted": "Panneau photovoltaïque fixable au sol",
+    "ISA.SolarFailsafe": "Déclenchement de la sécurité"
+}

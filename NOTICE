@@ -1,2 +1,67 @@
-ImmersiveSolarArrays
-Copyright The ImmersiveSolarArrays Contributors
+Immersive Solar Arrays, build 42 fork
+Copyright 2026 aspctt, for the changes listed below
+
+Carried forward from the NOTICE file of the work this is derived from, as
+Apache License 2.0 section 4(d) requires:
+
+    ImmersiveSolarArrays
+    Copyright The ImmersiveSolarArrays Contributors
+
+That work is at https://github.com/radx5Blue/ImmersiveSolarArrays and is
+licensed under the Apache License, Version 2.0. A copy of that licence is in
+the LICENSE file next to this one, unchanged from the original.
+
+"Project Zomboid" is a trademark of The Indie Stone. This project is in no way
+associated with nor endorsed by The Indie Stone.
+
+
+CHANGES IN THIS FORK
+
+This is a modified version. It targets build 42 only; everything that existed
+solely to support build 41 has been removed. The changes are described below,
+and every file that was changed carries the change in its own history.
+
+  Layout
+    The build 41 tree under mods/ImmersiveSolarArrays/media was removed and the
+    versioned folder renamed from 42.1 to 42, so the mod loads on any 42.x.
+
+  Translations
+    Converted from the build 41 Translate/<LANG>/<File>_<LANG>.txt tables to the
+    JSON files build 42 reads. Build 42 loads no .txt translations at all, so
+    every string in the mod had been rendering as its own key.
+
+  Item scripts
+    Rewritten against build 42: ItemType replaces Type, LearnedRecipes replaces
+    TeachedRecipes, DisplayName is dropped in favour of ItemName.json, and item
+    tags are namespaced.
+
+  Craft recipes
+    Tag queries namespaced, recipe names given a prefix and stripped of spaces,
+    and the recipe hooks rewritten against the build 42 OnCreate and OnTest
+    signatures. Build 42 removed recipecode.lua and the global Recipe table the
+    originals hung off.
+
+  Multiplayer
+    Generator plugging, generator activation, battery transfer, panel connection
+    and the bank's own switch all went through the server system directly, which
+    does not exist on a multiplayer client. They now travel as commands, which
+    the server already had handlers for.
+
+  Fixes
+    Loot distributions no longer corrupt the vanilla tables they extend; stash
+    houses register their containers and their map annotations; battery banks
+    can spawn in rooms again; several nil dereferences on unloaded squares are
+    guarded.
+
+  Removed
+    An unfinished survival guide entry, and the dead generator helpers left over
+    from the build 41 implementation.
+
+
+THIRD-PARTY COMPONENTS
+
+  Target Square: On Load Commands
+    By Poltergeist. Steam Workshop 2969455858. Distributed alongside this mod
+    because the world spawns depend on it. The author asks that it not be
+    re-uploaded; if you redistribute this fork, link to the original rather than
+    bundling it.

@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Журнал «Новые достижения: Энергия солнца»",
+    "ISA.SolarPanel": "Солнечная панель",
+    "ISA.ISAInverter": "Инвертор",
+    "ISA.DeepCycleBattery": "Аккумулятор (200Ач)",
+    "ISA.SuperBattery": "Аккумулятор (400Ач)",
+    "ISA.WiredCarBattery": "Проводная автомобильная батарея",
+    "ISA.DIYBattery": "Аккумуляторная батарея",
+    "ISA.PowerBank": "Аккумуляторный стеллаж",
+    "ISA.SolarPanelFlat": "Солнечная батарея (крыша)",
+    "ISA.SolarPanelWall": "Солнечная батарея (стена)",
+    "ISA.SolarPanelMounted": "Солнечная батарея (пол)",
+    "ISA.SolarFailsafe": "Блок автоматического ввода резерва"
+}

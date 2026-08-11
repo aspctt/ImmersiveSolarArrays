@@ -1,0 +1,43 @@
+# Text files: detected automatically, stored and checked out with LF endings.
+# "text=auto" rather than a bare "text" matters. Setting it outright declares
+# every file in the repository to be text, which overrides Git's own detection
+# and strips CR bytes out of binaries as they are committed. Nothing complains:
+# the file is compared after that same normalisation, so it reads as unchanged
+# while what is stored no longer matches what is on disk.
+* text=auto eol=lf
+
+# Project Zomboid reads all of these as plain text. Item scripts, recipes,
+# models, sandbox options and mod.info are line based, and the game is happy
+# with LF. Translations are JSON since build 42; the build 41 .txt tables, which
+# were encoded per language and needed working-tree-encoding to survive a round
+# trip, are gone.
+*.lua  text eol=lf
+*.txt  text eol=lf
+*.json text eol=lf
+*.info text eol=lf
+
+# Repository furniture rather than mod content.
+*.md   text eol=lf
+*.java text eol=lf
+*.py   text eol=lf
+*.ps1  text eol=lf
+LICENSE text eol=lf
+NOTICE  text eol=lf
+
+# Binaries, kept byte for byte. Auto-detection already covers all four, since
+# each has a NUL byte within the first twenty, but naming them is the belt to
+# its braces: the failure is silent and only shows up in a fresh clone.
+#
+# .tiles and .pack are the ones worth being careful about. Both are mostly
+# readable ASCII inside, so they look like text to anyone skimming a diff, and
+# a corrupted tiledef file means every tile in the mod loses its properties.
+*.png   binary
+*.fbx   binary
+*.tiles binary
+*.pack  binary
+*.class binary
+
+# Twenty seven languages of translation would otherwise make GitHub call this a
+# JSON project. They are hand maintained, so they stay diffable, they just do
+# not count towards the language breakdown.
+**/media/lua/shared/Translate/**/*.json linguist-detectable=false

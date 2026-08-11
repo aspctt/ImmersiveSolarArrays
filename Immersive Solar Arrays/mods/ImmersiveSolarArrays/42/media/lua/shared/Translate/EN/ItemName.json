@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "New Advancements: Energy From The Sun",
+    "ISA.SolarPanel": "Solar Panel (part)",
+    "ISA.ISAInverter": "Inverter",
+    "ISA.DeepCycleBattery": "200Ah Deep Cycle Battery",
+    "ISA.SuperBattery": "400Ah Deep Cycle Battery",
+    "ISA.WiredCarBattery": "Wired Car Battery",
+    "ISA.DIYBattery": "DIY Deep Cycle Battery",
+    "ISA.PowerBank": "Battery Bank",
+    "ISA.SolarPanelFlat": "Flat Solar Panel",
+    "ISA.SolarPanelWall": "Wall-Mounted Solar Panel",
+    "ISA.SolarPanelMounted": "Floor-Mounted Solar Panel",
+    "ISA.SolarFailsafe": "Failsafe Trigger"
+}

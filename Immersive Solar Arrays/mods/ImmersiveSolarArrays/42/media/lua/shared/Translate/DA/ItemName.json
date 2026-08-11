@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nye fremskridt: Energi fra solen",
+    "ISA.SolarPanel": "Solpanel (del)",
+    "ISA.ISAInverter": "Inverter",
+    "ISA.DeepCycleBattery": "200 Ah Deep Cycle batteri",
+    "ISA.SuperBattery": "400Ah Deep Cycle batteri",
+    "ISA.WiredCarBattery": "Kablet bilbatteri",
+    "ISA.DIYBattery": "DIY Deep Cycle-batteri",
+    "ISA.PowerBank": "Batteribank",
+    "ISA.SolarPanelFlat": "Fladt solpanel",
+    "ISA.SolarPanelWall": "Vægmonteret solpanel",
+    "ISA.SolarPanelMounted": "Gulvmonteret solpanel",
+    "ISA.SolarFailsafe": "Fejlsikker udløser"
+}

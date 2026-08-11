@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Lav DIY-batteri",
+    "ISA_WireCarBattery": "Tråd bilbatteri",
+    "ISA_UnwireCarBattery": "Ubehandler bilbatteri",
+    "ISA_MakeSolarRoofTile": "Lav fladt solpanel",
+    "ISA_MakeWallSolarPanel": "Lav vægmonteret solpanel",
+    "ISA_MakeFloorSolarPanel": "Lav gulvmonteret solpanel",
+    "ISA_ReverseSolarPanel": "Opdel solpanel til dele",
+    "ISA_CreateBatteryBank": "Opret batteribank",
+    "ISA_CreateSolarFailsafe": "Opret Solar Failsafe",
+    "ISA_MakeSolarPanel": "Lav solpanel (del)",
+    "ISA_MakeInverter": "Lav inverter"
+}

@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "ประดิษฐ์แบตเตอร์รี่เก็บประจุไฟ",
+    "ISA_WireCarBattery": "ต่อสายไฟแบตเตอร์รี่รถ",
+    "ISA_UnwireCarBattery": "ถอดสายไฟแบตเตอรี่รถ",
+    "ISA_MakeSolarRoofTile": "สร้างแผงโซลาร์เซลล์แบบวางราบ",
+    "ISA_MakeWallSolarPanel": "สร้างแผงโซลาร์เซลล์แบบติดผนัง",
+    "ISA_MakeFloorSolarPanel": "สร้างแผงโซลาร์เซลล์แบบตั้งพื้น",
+    "ISA_ReverseSolarPanel": "แยกแผงโซลาร์เซลล์กลับไปเป็นชิ้นส่วน",
+    "ISA_CreateBatteryBank": "สร้างฐานเก็บประจุไฟ",
+    "ISA_CreateSolarFailsafe": "สร้างสวิตช์กันไฟตกสำหรับโซลาร์เซลล์",
+    "ISA_MakeSolarPanel": "สร้างชิ้นส่วนแผงโซลาร์เซลล์",
+    "ISA_MakeInverter": "สร้างอินเวอร์เตอร์"
+}

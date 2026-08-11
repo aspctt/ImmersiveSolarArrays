@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Нові досягнення: енергія від Сонця",
+    "ISA.SolarPanel": "Сонячна панель (частина)",
+    "ISA.ISAInverter": "Інвертор",
+    "ISA.DeepCycleBattery": "Акумулятор глибокого циклу ємністю 200 Аг",
+    "ISA.SuperBattery": "Акумулятор глибокого циклу 400 Аг",
+    "ISA.WiredCarBattery": "Провідний автомобільний акумулятор",
+    "ISA.DIYBattery": "Зробіть самостійне цикл акумулятор",
+    "ISA.PowerBank": "Банк батареї",
+    "ISA.SolarPanelFlat": "Плоска сонячна панель",
+    "ISA.SolarPanelWall": "Настінна сонячна панель",
+    "ISA.SolarPanelMounted": "Сонячна панель, встановлена на підлозі",
+    "ISA.SolarFailsafe": "Безвідмовний тригер"
+}

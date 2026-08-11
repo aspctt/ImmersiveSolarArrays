@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "새로운 발전: 태양으로부터의 에너지",
+    "ISA.SolarPanel": "태양광 패널(일부)",
+    "ISA.ISAInverter": "인버터",
+    "ISA.DeepCycleBattery": "200Ah 딥 사이클 배터리",
+    "ISA.SuperBattery": "400Ah 딥 사이클 배터리",
+    "ISA.WiredCarBattery": "유선자동차 배터리",
+    "ISA.DIYBattery": "DIY 딥 사이클 배터리",
+    "ISA.PowerBank": "배터리 뱅크",
+    "ISA.SolarPanelFlat": "평면 태양광 패널",
+    "ISA.SolarPanelWall": "벽걸이 형 태양 전지 패널",
+    "ISA.SolarPanelMounted": "바닥 장착형 태양 전지판",
+    "ISA.SolarFailsafe": "안전 장치 트리거"
+}

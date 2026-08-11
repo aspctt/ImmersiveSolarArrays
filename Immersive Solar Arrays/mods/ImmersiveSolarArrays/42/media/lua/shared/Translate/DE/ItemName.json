@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Neue Fortschritte: Energie aus der Sonne",
+    "ISA.SolarPanel": "Solarpanel (Teil)",
+    "ISA.ISAInverter": "Wandler",
+    "ISA.DeepCycleBattery": "200-Ah-Deep-Cycle-Batterie",
+    "ISA.SuperBattery": "400-Ah-Deep-Cycle-Batterie",
+    "ISA.WiredCarBattery": "Kabelgebundene Autobatterie",
+    "ISA.DIYBattery": "DIY Deep-Cycle-Batterie",
+    "ISA.PowerBank": "Batteriebank",
+    "ISA.SolarPanelFlat": "Flaches Solarpanel",
+    "ISA.SolarPanelWall": "Wandmontiertes Solarpanel",
+    "ISA.SolarPanelMounted": "Bodenmontiertes Solarpanel",
+    "ISA.SolarFailsafe": "Ausfallsicherer Auslöser"
+}

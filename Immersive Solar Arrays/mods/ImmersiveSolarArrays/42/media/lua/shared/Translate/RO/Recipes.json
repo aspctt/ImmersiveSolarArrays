@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Faceți baterie DIY",
+    "ISA_WireCarBattery": "Baterie de mașină cu sârmă",
+    "ISA_UnwireCarBattery": "Deconectați bateria mașinii",
+    "ISA_MakeSolarRoofTile": "Faceți panou solar plat",
+    "ISA_MakeWallSolarPanel": "Faceți panouri solare montate pe perete",
+    "ISA_MakeFloorSolarPanel": "Faceți panouri solare montate pe podea",
+    "ISA_ReverseSolarPanel": "Împărțiți panoul solar în părți",
+    "ISA_CreateBatteryBank": "Creați o bancă de baterii",
+    "ISA_CreateSolarFailsafe": "Creați Solar Failsafe",
+    "ISA_MakeSolarPanel": "Faceți panou solar (parte)",
+    "ISA_MakeInverter": "Faceți invertorul"
+}

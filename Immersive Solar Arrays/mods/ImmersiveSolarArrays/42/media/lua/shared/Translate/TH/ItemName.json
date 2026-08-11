@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "ความก้าวหน้าใหม่: พลังงานจากดวงอาทิตย์",
+    "ISA.SolarPanel": "แผงโซลาร์เซลล์ (บางส่วน)",
+    "ISA.ISAInverter": "อินเวอร์เตอร์",
+    "ISA.DeepCycleBattery": "แบตเตอรี่คลายประจุลึก 200 แอมป์",
+    "ISA.SuperBattery": "แบตเตอรี่คลายประจุลึก 400 แอมป์",
+    "ISA.WiredCarBattery": "แบตเตอรี่รถยนต์ (ต่อสายไฟแล้ว)",
+    "ISA.DIYBattery": "แบตเตอรี่คลายประจุลึก (ประดิษฐ์เอง)",
+    "ISA.PowerBank": "ฐานเก็บแบตเตอรี่ประจุไฟ",
+    "ISA.SolarPanelFlat": "แผงโซลาร์เซลล์แบบวางราบ",
+    "ISA.SolarPanelWall": "แผงโซลาร์เซลล์แบบติดผนัง",
+    "ISA.SolarPanelMounted": "แผงโซลาร์เซลล์แบบตั้งพื้น",
+    "ISA.SolarFailsafe": "สวิตช์ป้องกันไฟตก"
+}

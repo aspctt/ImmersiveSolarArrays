@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Kemajuan Baru: Energi Dari Matahari",
+    "ISA.SolarPanel": "Panel Surya (bagian)",
+    "ISA.ISAInverter": "Pembalik",
+    "ISA.DeepCycleBattery": "Baterai Siklus Dalam 200Ah",
+    "ISA.SuperBattery": "Baterai Siklus Dalam 400Ah",
+    "ISA.WiredCarBattery": "Aki Mobil Berkabel",
+    "ISA.DIYBattery": "Baterai Siklus Dalam DIY",
+    "ISA.PowerBank": "Bank Baterai",
+    "ISA.SolarPanelFlat": "Panel Surya Datar",
+    "ISA.SolarPanelWall": "Panel Surya yang Dipasang di Dinding",
+    "ISA.SolarPanelMounted": "Panel Surya yang Dipasang di Lantai",
+    "ISA.SolarFailsafe": "Pemicu Kegagalan Aman"
+}

@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "DIY电池",
+    "ISA_WireCarBattery": "线控车电池",
+    "ISA_UnwireCarBattery": "无线汽车电池",
+    "ISA_MakeSolarRoofTile": "制作平板太阳能电池板",
+    "ISA_MakeWallSolarPanel": "制作壁挂式太阳能电池板",
+    "ISA_MakeFloorSolarPanel": "制作落地式太阳能电池板",
+    "ISA_ReverseSolarPanel": "将太阳能电池板拆分为多个部件",
+    "ISA_CreateBatteryBank": "创建电池组",
+    "ISA_CreateSolarFailsafe": "创建太阳能故障安全装置",
+    "ISA_MakeSolarPanel": "制作太阳能电池板（部分）",
+    "ISA_MakeInverter": "制作逆变器"
+}

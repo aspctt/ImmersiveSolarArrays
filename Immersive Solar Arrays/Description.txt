@@ -1,0 +1,63 @@
+[h1]Immersive Solar Arrays[/h1]
+
+Harvest solar power for the needs of your base. Wire car batteries into a battery bank,
+put panels on the roof, and run your fridges and freezers off the sun instead of a
+generator that has to be fed.
+
+This is a fork of RadX5 and Poltergeist's Immersive Solar Arrays, rebuilt for build 42.
+Support for build 41 has been dropped.
+
+[h1]Requirements[/h1]
+
+Build 42.20 or newer.
+
+[b]Target Square: On Load Commands[/b] is needed for the pre-placed crates that spawn
+around the map. Without it the rest of the mod still works, you just do not get those
+crates. It is safe to add or remove on an existing save.
+
+[h1]How it works[/h1]
+
+Wire a car battery, build a battery bank, then craft panels and connect them to the bank.
+The bank powers everything a generator would, in the same radius, and charges during the
+day from whatever panels it can see. Cloud, fog, temperature and the length of the day
+all move the number.
+
+Right click the bank for its status window. The summary tab tells you whether the panels
+are keeping up, and how long the charge lasts at the current draw. The details tab lists
+what is actually pulling power.
+
+A generator plugged in near the bank becomes its backup. With a failsafe trigger on the
+generator's square, the bank starts the generator when it runs low and stops it once it
+has caught up.
+
+Everything above works in both singleplayer and multiplayer.
+
+[h1]Options[/h1]
+
+Sandbox options cover panel efficiency, how quickly batteries wear out, DIY battery
+capacity, how often the bank charges, how the power draw is calculated, loot rarity for
+each item group, world spawns and stash houses.
+
+Two of the recipes, making a solar panel and making an inverter from scratch, are off by
+default. Turn on expanded recipes in the sandbox options if you want them.
+
+[h1]Notes[/h1]
+
+Only run one version of this mod. The mod id is "ISA".
+
+Some options need a game reload, and stash houses want a new save to appear properly.
+
+Test the mod on a save you are willing to lose before adding it to a long running one.
+
+[h1]Reporting a bug[/h1]
+
+Reproduce it with only this mod enabled and write down the steps. If it only happens with
+other mods loaded, narrow it down to which ones. Check the console log for errors and post
+those along with everything else.
+
+[h1]Credits[/h1]
+
+Original mod by RadX5 and Poltergeist, with thanks to everyone who contributed to it over
+the years. Licensed under the Apache License 2.0.
+
+Original: https://github.com/radx5Blue/ImmersiveSolarArrays

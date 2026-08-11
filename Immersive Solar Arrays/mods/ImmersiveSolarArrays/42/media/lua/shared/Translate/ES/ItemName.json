@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nuevos Avances: Energía del sol",
+    "ISA.SolarPanel": "Panel solar (pieza)",
+    "ISA.ISAInverter": "Inversor",
+    "ISA.DeepCycleBattery": "Batería de 200Ah de ciclo profundo",
+    "ISA.SuperBattery": "Batería de 400Ah de ciclo profundo",
+    "ISA.WiredCarBattery": "Batería de coche con cable",
+    "ISA.DIYBattery": "Batería  de ciclo profundo fabricada",
+    "ISA.PowerBank": "Banco de baterías",
+    "ISA.SolarPanelFlat": "Panel solar plano",
+    "ISA.SolarPanelWall": "Panel solar de montaje en la pared",
+    "ISA.SolarPanelMounted": "Panel solar de montaje en el suelo",
+    "ISA.SolarFailsafe": "Disparador Anti-fallo"
+}

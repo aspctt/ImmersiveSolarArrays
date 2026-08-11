@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Noi progrese: Energia Soarelui",
+    "ISA.SolarPanel": "Panou solar (parte)",
+    "ISA.ISAInverter": "Invertor",
+    "ISA.DeepCycleBattery": "Baterie cu ciclu adânc de 200 Ah",
+    "ISA.SuperBattery": "Baterie cu ciclu adânc de 400 Ah",
+    "ISA.WiredCarBattery": "Baterie de mașină cu fir",
+    "ISA.DIYBattery": "Baterie DIY Deep Cycle",
+    "ISA.PowerBank": "Banca de baterii",
+    "ISA.SolarPanelFlat": "Panou solar plat",
+    "ISA.SolarPanelWall": "Panou solar montat pe perete",
+    "ISA.SolarPanelMounted": "Panou solar montat pe podea",
+    "ISA.SolarFailsafe": "Declanșator de siguranță"
+}

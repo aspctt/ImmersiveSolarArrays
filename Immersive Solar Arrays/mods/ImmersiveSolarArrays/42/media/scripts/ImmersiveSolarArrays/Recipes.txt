@@ -1,0 +1,279 @@
+/*
+    Build 42 craft recipes.
+
+    Changes from the build 41 originals and from the 42.1 beta branch:
+
+      tags[...]        namespaced. Tag strings are matched literally after lowercasing,
+                       so a bare "Screwdriver" matched nothing and every recipe that
+                       asked for one was impossible to perform.
+      OnCreate         points at a table this mod owns. Build 42 removed recipecode.lua
+                       and the global Recipe table with it, so Recipe.OnCreate.* resolved
+                       to nothing. The signature is (craftRecipeData, character) now.
+      names            no spaces, and prefixed so they cannot collide with another mod's
+                       recipe. The name is also the translation key, see Recipes.json.
+      DIY battery      takes four wired car batteries again, as in build 41. The beta
+                       changed it to a single raw car battery, which left its OnCreate
+                       dividing by zero because a raw car battery carries no capacity.
+
+    Make Solar Panel and Make Inverter are gated behind the enableExpandedRecipes
+    sandbox option. Build 41 did that with recipe:setIsHidden, which no longer exists,
+    so the gate is an OnTest that rejects every candidate item while the option is off.
+*/
+module ISA
+{
+    imports { Base }
+
+    craftRecipe ISA_WireCarBattery
+    {
+        timedAction = MakingElectrical,
+        time = 80,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        xpAward = Electricity:1,
+        OnCreate = ISARecipes.OnCreate.wireCarBattery,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [Base.ElectricWire],
+            item 1 tags[base:carbattery] mode:destroy flags[NoBrokenItems],
+        }
+        outputs
+        {
+            item 1 ISA.WiredCarBattery,
+        }
+    }
+
+    craftRecipe ISA_UnwireCarBattery
+    {
+        timedAction = DismantleElectrical,
+        time = 80,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        OnCreate = ISARecipes.OnCreate.unwireCarBattery,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.WiredCarBattery] mode:destroy,
+        }
+        outputs
+        {
+        }
+    }
+
+    craftRecipe ISA_MakeDIYBattery
+    {
+        timedAction = MakingElectrical,
+        time = 80,
+        category = Electrical,
+        NeedToBeLearn = true,
+        SkillRequired = Electricity:5,
+        xpAward = Electricity:1,
+        OnCreate = ISARecipes.OnCreate.createDiyBattery,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [Base.ElectronicsScrap],
+            item 4 [ISA.WiredCarBattery] mode:destroy,
+        }
+        outputs
+        {
+            item 1 ISA.DIYBattery,
+        }
+    }
+
+    craftRecipe ISA_MakeSolarRoofTile
+    {
+        timedAction = MakingElectrical,
+        time = 120,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.SolarPanel],
+            item 3 [Base.ElectricWire],
+        }
+        outputs
+        {
+            item 1 ISA.SolarPanelFlat,
+        }
+    }
+
+    craftRecipe ISA_MakeWallSolarPanel
+    {
+        timedAction = MakingElectrical,
+        time = 120,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.SolarPanel],
+            item 3 [Base.ElectricWire],
+            item 4 [Base.MetalBar],
+            item 4 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 ISA.SolarPanelWall,
+        }
+    }
+
+    craftRecipe ISA_MakeFloorSolarPanel
+    {
+        timedAction = MakingElectrical,
+        time = 120,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.SolarPanel],
+            item 3 [Base.ElectricWire],
+            item 4 [Base.MetalBar],
+            item 4 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 ISA.SolarPanelMounted,
+        }
+    }
+
+    /*
+        Picking a panel up off the ground yields a plain Base.Moveable carrying the tile
+        sprite, not the ISA item that placed it, so both have to be accepted and the
+        OnTest sorts out which moveables are ours.
+    */
+    craftRecipe ISA_ReverseSolarPanel
+    {
+        timedAction = DismantleElectrical,
+        time = 80,
+        category = Electrical,
+        NeedToBeLearn = true,
+        AutoLearnAny = Electricity:4,
+        SkillRequired = Electricity:3,
+        OnTest = ISARecipes.OnTest.solarPanelMoveable,
+        OnCreate = ISARecipes.OnCreate.reverseSolarPanel,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.SolarPanelFlat;ISA.SolarPanelWall;ISA.SolarPanelMounted;Base.Moveable] mode:destroy,
+        }
+        outputs
+        {
+            item 1 ISA.SolarPanel,
+        }
+    }
+
+    craftRecipe ISA_CreateBatteryBank
+    {
+        timedAction = MakingElectrical,
+        time = 400,
+        category = Electrical,
+        NeedToBeLearn = true,
+        SkillRequired = Electricity:4;MetalWelding:2,
+        xpAward = Electricity:8;MetalWelding:2,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 [ISA.ISAInverter],
+            item 3 [Base.ElectricWire],
+            item 6 [Base.ElectronicsScrap],
+            item 4 [Base.MetalBar],
+            item 4 [Base.Screws],
+            item 5 [Base.SmallSheetMetal],
+        }
+        outputs
+        {
+            item 1 ISA.PowerBank,
+        }
+    }
+
+    craftRecipe ISA_CreateSolarFailsafe
+    {
+        timedAction = MakingElectrical,
+        time = 120,
+        category = Electrical,
+        NeedToBeLearn = true,
+        SkillRequired = Electricity:3,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 2 [Base.ElectricWire],
+            item 1 [Base.RemoteCraftedV3],
+            item 4 [ISA.WiredCarBattery] mode:destroy,
+        }
+        outputs
+        {
+            item 1 ISA.SolarFailsafe,
+        }
+    }
+
+    craftRecipe ISA_MakeSolarPanel
+    {
+        timedAction = MakingElectrical,
+        time = 250,
+        category = Electrical,
+        NeedToBeLearn = true,
+        SkillRequired = Electricity:5,
+        OnTest = ISARecipes.OnTest.expandedRecipes,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 1 tags[base:weldingmask] mode:keep,
+            item 5 [Base.BlowTorch],
+            item 2 [Base.ElectricWire],
+            item 10 [Base.Screws],
+            item 10 [Base.ElectronicsScrap],
+            item 3 [Base.SheetMetal],
+        }
+        outputs
+        {
+            item 1 ISA.SolarPanel,
+        }
+    }
+
+    craftRecipe ISA_MakeInverter
+    {
+        timedAction = MakingElectrical,
+        time = 250,
+        category = Electrical,
+        NeedToBeLearn = true,
+        SkillRequired = Electricity:5,
+        OnTest = ISARecipes.OnTest.expandedRecipes,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
+            item 4 [Base.SmallSheetMetal],
+            item 5 [Base.ScrapMetal],
+            item 25 [Base.ElectronicsScrap],
+            item 5 [Base.ElectricWire],
+            item 10 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 ISA.ISAInverter,
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Buat Baterai DIY",
+    "ISA_WireCarBattery": "Kawat Aki Mobil",
+    "ISA_UnwireCarBattery": "Lepas Kabel Aki Mobil",
+    "ISA_MakeSolarRoofTile": "Membuat Panel Surya Datar",
+    "ISA_MakeWallSolarPanel": "Membuat Panel Surya yang Dipasang di Dinding",
+    "ISA_MakeFloorSolarPanel": "Membuat Panel Surya yang Dipasang di Lantai",
+    "ISA_ReverseSolarPanel": "Pisahkan Panel Surya menjadi beberapa bagian",
+    "ISA_CreateBatteryBank": "Buat Bank Baterai",
+    "ISA_CreateSolarFailsafe": "Buat Solar Failsafe",
+    "ISA_MakeSolarPanel": "Membuat Panel Surya (bagian)",
+    "ISA_MakeInverter": "Membuat Inverter"
+}

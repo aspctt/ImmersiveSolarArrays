@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "DIYバッテリーを作る",
+    "ISA_WireCarBattery": "ワイヤーカーバッテリー",
+    "ISA_UnwireCarBattery": "車のバッテリーの配線を外す",
+    "ISA_MakeSolarRoofTile": "フラットソーラーパネルを作る",
+    "ISA_MakeWallSolarPanel": "壁掛けソーラーパネルを作る",
+    "ISA_MakeFloorSolarPanel": "床置き型ソーラーパネルを作る",
+    "ISA_ReverseSolarPanel": "ソーラーパネルをパーツに分割",
+    "ISA_CreateBatteryBank": "バッテリーバンクの作成",
+    "ISA_CreateSolarFailsafe": "太陽光発電フェイルセーフの作成",
+    "ISA_MakeSolarPanel": "ソーラーパネル（部分）を作る",
+    "ISA_MakeInverter": "インバータを作る"
+}

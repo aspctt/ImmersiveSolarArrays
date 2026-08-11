@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "DIY Pil Yap",
+    "ISA_WireCarBattery": "Tel Araba Aküsü",
+    "ISA_UnwireCarBattery": "Araç Aküsünün Kablolarını Çözün",
+    "ISA_MakeSolarRoofTile": "Düz Güneş Paneli Yapın",
+    "ISA_MakeWallSolarPanel": "Duvara Monte Güneş Paneli Yapın",
+    "ISA_MakeFloorSolarPanel": "Zemine Monte Güneş Paneli Yapın",
+    "ISA_ReverseSolarPanel": "Güneş Panelini parçalara ayırın",
+    "ISA_CreateBatteryBank": "Pil Bankası Oluştur",
+    "ISA_CreateSolarFailsafe": "Solar Arıza Güvenliği Oluşturun",
+    "ISA_MakeSolarPanel": "Güneş Paneli Yapın (parça)",
+    "ISA_MakeInverter": "İnvertör Yap"
+}

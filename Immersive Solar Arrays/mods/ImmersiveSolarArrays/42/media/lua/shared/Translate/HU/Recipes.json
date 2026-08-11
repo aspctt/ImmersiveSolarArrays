@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Készítsen DIY akkumulátort",
+    "ISA_WireCarBattery": "Vezetékes autó akkumulátor",
+    "ISA_UnwireCarBattery": "Vezeték nélküli autó akkumulátor",
+    "ISA_MakeSolarRoofTile": "Készítsen lapos napelemet",
+    "ISA_MakeWallSolarPanel": "Készítsen falra szerelhető napelemet",
+    "ISA_MakeFloorSolarPanel": "Készítsen padlóra szerelhető napelemet",
+    "ISA_ReverseSolarPanel": "A napelem panel felosztása részekre",
+    "ISA_CreateBatteryBank": "Akkumulátorbank létrehozása",
+    "ISA_CreateSolarFailsafe": "Hozzon létre Solar Failsafe-t",
+    "ISA_MakeSolarPanel": "Napelem készítés (rész)",
+    "ISA_MakeInverter": "Készítsen invertert"
+}

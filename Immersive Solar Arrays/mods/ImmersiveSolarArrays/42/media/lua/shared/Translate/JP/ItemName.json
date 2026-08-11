@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "新たな進歩: 太陽からのエネルギー",
+    "ISA.SolarPanel": "ソーラーパネル（一部）",
+    "ISA.ISAInverter": "インバータ",
+    "ISA.DeepCycleBattery": "200Ahディープサイクルバッテリー",
+    "ISA.SuperBattery": "400Ahディープサイクルバッテリー",
+    "ISA.WiredCarBattery": "有線カーバッテリー",
+    "ISA.DIYBattery": "DIYディープサイクルバッテリー",
+    "ISA.PowerBank": "バッテリーバンク",
+    "ISA.SolarPanelFlat": "フラットソーラーパネル",
+    "ISA.SolarPanelWall": "壁掛けソーラーパネル",
+    "ISA.SolarPanelMounted": "床置き型ソーラーパネル",
+    "ISA.SolarFailsafe": "フェールセーフトリガー"
+}

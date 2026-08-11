@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Yeni Gelişmeler: Güneşten Gelen Enerji",
+    "ISA.SolarPanel": "Güneş Paneli (parça)",
+    "ISA.ISAInverter": "Çevirici",
+    "ISA.DeepCycleBattery": "200Ah Derin Çevrim Aküsü",
+    "ISA.SuperBattery": "400Ah Derin Çevrim Aküsü",
+    "ISA.WiredCarBattery": "Kablolu Araç Aküsü",
+    "ISA.DIYBattery": "DIY Derin Döngü Pil",
+    "ISA.PowerBank": "Şarj Bankası",
+    "ISA.SolarPanelFlat": "Düz Güneş Paneli",
+    "ISA.SolarPanelWall": "Duvara Monte Güneş Paneli",
+    "ISA.SolarPanelMounted": "Zemine Monte Güneş Paneli",
+    "ISA.SolarFailsafe": "Arıza Korumalı Tetikleyici"
+}

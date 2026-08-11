@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Maak een doe-het-zelf-batterij",
+    "ISA_WireCarBattery": "Draad auto-accu",
+    "ISA_UnwireCarBattery": "Ontkoppel de autoaccu",
+    "ISA_MakeSolarRoofTile": "Maak een plat zonnepaneel",
+    "ISA_MakeWallSolarPanel": "Maak een aan de muur gemonteerd zonnepaneel",
+    "ISA_MakeFloorSolarPanel": "Maak een op de vloer gemonteerd zonnepaneel",
+    "ISA_ReverseSolarPanel": "Zonnepaneel opsplitsen in onderdelen",
+    "ISA_CreateBatteryBank": "Maak een batterijbank",
+    "ISA_CreateSolarFailsafe": "Creëer een failsafe voor zonne-energie",
+    "ISA_MakeSolarPanel": "Merk zonnepaneel (onderdeel)",
+    "ISA_MakeInverter": "Omvormer maken"
+}

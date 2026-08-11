@@ -1,0 +1,49 @@
+###############################################################################
+# Immersive Solar Arrays, build 42 fork
+###############################################################################
+
+## Check harness build output
+# CheckLua is compiled from tests/harness/CheckLua.java on demand, and the list
+# of Lua files it is handed is written next to it.
+tests/build/
+
+## IDE / editor cruft
+.idea/
+.vscode/
+.vs/
+*.iml
+*.code-workspace
+*.swp
+*~
+
+## OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Logs and crash artefacts, wherever they land
+*.log
+hs_err_pid*.log
+logs/
+
+###############################################################################
+# Local-only reference material. NOT for publication.
+#
+# original-mods/ holds the upstream mods as they were before this fork, plus an
+# unrelated mod of the author's kept as a style reference. It is what the checks
+# in tests/README.md calibrate against: run them over that folder and they
+# report the problems this fork was written to fix. None of it needs to ship,
+# and one of the mods in there asks not to be re-uploaded, so it stays local.
+#
+# context-files/ are screenshots taken while working.
+#
+# example-script-*.lua are the author's own scripts from an unrelated project,
+# kept as a style reference only.
+#
+# Remove an entry only if you deliberately intend to publish it.
+# See NOTICE and LICENSE.
+###############################################################################
+original-mods/
+context-files/
+example-script-*.lua
+NOTES.md

@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Tee DIY-akku",
+    "ISA_WireCarBattery": "Langallinen auton akku",
+    "ISA_UnwireCarBattery": "Irrotettava auton akku",
+    "ISA_MakeSolarRoofTile": "Tee litteä aurinkopaneeli",
+    "ISA_MakeWallSolarPanel": "Valmista seinään kiinnitettävä aurinkopaneeli",
+    "ISA_MakeFloorSolarPanel": "Tee lattialle asennettava aurinkopaneeli",
+    "ISA_ReverseSolarPanel": "Jaa aurinkopaneeli osiin",
+    "ISA_CreateBatteryBank": "Luo akkupankki",
+    "ISA_CreateSolarFailsafe": "Luo Solar Failsafe",
+    "ISA_MakeSolarPanel": "Tee aurinkopaneeli (osa)",
+    "ISA_MakeInverter": "Tee invertteri"
+}

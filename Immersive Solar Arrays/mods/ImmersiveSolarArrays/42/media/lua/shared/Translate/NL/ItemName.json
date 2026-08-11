@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nieuwe ontwikkelingen: energie van de zon",
+    "ISA.SolarPanel": "Zonnepaneel (onderdeel)",
+    "ISA.ISAInverter": "Omvormer",
+    "ISA.DeepCycleBattery": "200Ah deep-cycle-accu",
+    "ISA.SuperBattery": "400 Ah deep-cycle-accu",
+    "ISA.WiredCarBattery": "Bedrade auto-accu",
+    "ISA.DIYBattery": "DIY Deep Cycle-batterij",
+    "ISA.PowerBank": "Batterijbank",
+    "ISA.SolarPanelFlat": "Plat zonnepaneel",
+    "ISA.SolarPanelWall": "Aan de muur gemonteerd zonnepaneel",
+    "ISA.SolarPanelMounted": "Op de vloer gemonteerd zonnepaneel",
+    "ISA.SolarFailsafe": "Faalveilige trigger"
+}

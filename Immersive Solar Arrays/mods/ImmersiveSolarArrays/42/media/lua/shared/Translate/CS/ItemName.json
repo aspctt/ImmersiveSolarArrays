@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nové pokroky: Energie ze Slunce",
+    "ISA.SolarPanel": "Solární panel (část)",
+    "ISA.ISAInverter": "Střídač",
+    "ISA.DeepCycleBattery": "200Ah baterie s hlubokým cyklem",
+    "ISA.SuperBattery": "Baterie s hlubokým cyklem 400 Ah",
+    "ISA.WiredCarBattery": "Kabelová autobaterie",
+    "ISA.DIYBattery": "DIY baterie s hlubokým cyklem",
+    "ISA.PowerBank": "Bateriová banka",
+    "ISA.SolarPanelFlat": "Plochý solární panel",
+    "ISA.SolarPanelWall": "Solární panel pro montáž na stěnu",
+    "ISA.SolarPanelMounted": "Solární panel na podlahu",
+    "ISA.SolarFailsafe": "Bezpečný spouštěč"
+}

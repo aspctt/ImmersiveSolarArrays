@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Új fejlesztések: Energia a Napból",
+    "ISA.SolarPanel": "Napelem (rész)",
+    "ISA.ISAInverter": "Inverter",
+    "ISA.DeepCycleBattery": "200Ah mélyciklusú akkumulátor",
+    "ISA.SuperBattery": "400Ah mélyciklusú akkumulátor",
+    "ISA.WiredCarBattery": "Vezetékes autó akkumulátor",
+    "ISA.DIYBattery": "DIY Deep Cycle akkumulátor",
+    "ISA.PowerBank": "Akkumulátorbank",
+    "ISA.SolarPanelFlat": "Lapos napelem",
+    "ISA.SolarPanelWall": "Falra szerelhető napelem",
+    "ISA.SolarPanelMounted": "Padlóra szerelhető napelem",
+    "ISA.SolarFailsafe": "Failsafe trigger"
+}

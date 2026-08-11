@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Uusia edistysaskeleita: Energiaa auringosta",
+    "ISA.SolarPanel": "Aurinkopaneeli (osa)",
+    "ISA.ISAInverter": "Invertteri",
+    "ISA.DeepCycleBattery": "200 Ah Deep Cycle -akku",
+    "ISA.SuperBattery": "400 Ah Deep Cycle -akku",
+    "ISA.WiredCarBattery": "Langallinen auton akku",
+    "ISA.DIYBattery": "DIY Deep Cycle -akku",
+    "ISA.PowerBank": "Akkupankki",
+    "ISA.SolarPanelFlat": "Litteä aurinkopaneeli",
+    "ISA.SolarPanelWall": "Seinään kiinnitettävä aurinkopaneeli",
+    "ISA.SolarPanelMounted": "Lattiaan asennettava aurinkopaneeli",
+    "ISA.SolarFailsafe": "Failsafe Trigger"
+}

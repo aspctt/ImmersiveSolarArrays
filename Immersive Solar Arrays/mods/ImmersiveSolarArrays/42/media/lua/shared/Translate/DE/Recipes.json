@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Machen Sie eine DIY-Batterie",
+    "ISA_WireCarBattery": "Autobatterie verkabeln",
+    "ISA_UnwireCarBattery": "Autobatterie abklemmen",
+    "ISA_MakeSolarRoofTile": "Machen Sie ein flaches Solarpanel",
+    "ISA_MakeWallSolarPanel": "Machen Sie ein wandmontiertes Solarpanel",
+    "ISA_MakeFloorSolarPanel": "Stellen Sie ein bodenmontiertes Solarpanel her",
+    "ISA_ReverseSolarPanel": "Teilen Sie das Solarpanel in Teile",
+    "ISA_CreateBatteryBank": "Erstellen Sie eine Batteriebank",
+    "ISA_CreateSolarFailsafe": "Erstellen Sie Solar Failsafe",
+    "ISA_MakeSolarPanel": "Machen Sie ein Solarpanel (Teil)",
+    "ISA_MakeInverter": "Wechselrichter herstellen"
+}

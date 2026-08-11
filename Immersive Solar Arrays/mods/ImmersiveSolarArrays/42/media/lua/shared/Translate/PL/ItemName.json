@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Nowe osiągnięcia: energia ze słońca",
+    "ISA.SolarPanel": "Panel słoneczny (część)",
+    "ISA.ISAInverter": "Falownik",
+    "ISA.DeepCycleBattery": "Akumulator o dużej pojemności 200 Ah",
+    "ISA.SuperBattery": "Akumulator o pojemności 400 Ah o głębokim cyklu",
+    "ISA.WiredCarBattery": "Okablowany akumulator samochodowy",
+    "ISA.DIYBattery": "DIY akumulator głębokiego cyklu",
+    "ISA.PowerBank": "Bank energii",
+    "ISA.SolarPanelFlat": "Płaski panel słoneczny",
+    "ISA.SolarPanelWall": "Panel słoneczny montowany na ścianie",
+    "ISA.SolarPanelMounted": "Panel słoneczny montowany na podłodze",
+    "ISA.SolarFailsafe": "Włącznik awaryjny"
+}

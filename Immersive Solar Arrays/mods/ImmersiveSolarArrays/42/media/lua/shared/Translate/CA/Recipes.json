@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Feu una bateria de bricolatge",
+    "ISA_WireCarBattery": "Bateria de cotxe de filferro",
+    "ISA_UnwireCarBattery": "Desconnecteu la bateria del cotxe",
+    "ISA_MakeSolarRoofTile": "Fer un panell solar pla",
+    "ISA_MakeWallSolarPanel": "Feu un panell solar muntat a la paret",
+    "ISA_MakeFloorSolarPanel": "Feu un panell solar muntat al terra",
+    "ISA_ReverseSolarPanel": "Dividir el panell solar en parts",
+    "ISA_CreateBatteryBank": "Crea un banc de bateries",
+    "ISA_CreateSolarFailsafe": "Creeu solar Failsafe",
+    "ISA_MakeSolarPanel": "Fer panell solar (part)",
+    "ISA_MakeInverter": "Fer un inversor"
+}

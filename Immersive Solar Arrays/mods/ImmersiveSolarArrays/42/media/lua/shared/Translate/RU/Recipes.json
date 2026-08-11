@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Сделайте DIY батарею",
+    "ISA_WireCarBattery": "Проводная автомобильная батарея",
+    "ISA_UnwireCarBattery": "Неужелющий автомобильный аккумулятор",
+    "ISA_MakeSolarRoofTile": "Сделать солнечную панель (крыша)",
+    "ISA_MakeWallSolarPanel": "Сделать солнечную панель (стена)",
+    "ISA_MakeFloorSolarPanel": "Сделать солнечную панель (пол)",
+    "ISA_ReverseSolarPanel": "Разделить солнечную панель на части",
+    "ISA_CreateBatteryBank": "Сделать Аккумуляторную Батарею",
+    "ISA_CreateSolarFailsafe": "Создать Отказоустойчивый Механизм",
+    "ISA_MakeSolarPanel": "Сделайте солнечную панель (часть)",
+    "ISA_MakeInverter": "Сделать инвертор"
+}

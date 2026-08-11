@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Gumawa ng DIY Battery",
+    "ISA_WireCarBattery": "Baterya ng Wire Car",
+    "ISA_UnwireCarBattery": "Tanggalin ang Kawad na Baterya ng Sasakyan",
+    "ISA_MakeSolarRoofTile": "Gumawa ng Flat Solar Panel",
+    "ISA_MakeWallSolarPanel": "Gumawa ng Wall-Mounted Solar Panel",
+    "ISA_MakeFloorSolarPanel": "Gumawa ng Floor-Mounted Solar Panel",
+    "ISA_ReverseSolarPanel": "Hatiin ang Solar Panel sa mga bahagi",
+    "ISA_CreateBatteryBank": "Lumikha ng Battery Bank",
+    "ISA_CreateSolarFailsafe": "Lumikha ng Solar Failsafe",
+    "ISA_MakeSolarPanel": "Gumawa ng Solar Panel (bahagi)",
+    "ISA_MakeInverter": "Gumawa ng Inverter"
+}

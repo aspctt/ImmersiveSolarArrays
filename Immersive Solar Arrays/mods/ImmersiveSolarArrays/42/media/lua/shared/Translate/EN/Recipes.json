@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Make DIY Battery",
+    "ISA_WireCarBattery": "Wire Car Battery",
+    "ISA_UnwireCarBattery": "Unwire Car Battery",
+    "ISA_MakeSolarRoofTile": "Make Flat Solar Panel",
+    "ISA_MakeWallSolarPanel": "Make Wall-Mounted Solar Panel",
+    "ISA_MakeFloorSolarPanel": "Make Floor-Mounted Solar Panel",
+    "ISA_ReverseSolarPanel": "Split Solar Panel to parts",
+    "ISA_CreateBatteryBank": "Create Battery Bank",
+    "ISA_CreateSolarFailsafe": "Create Solar Failsafe",
+    "ISA_MakeSolarPanel": "Make Solar Panel (part)",
+    "ISA_MakeInverter": "Make Inverter"
+}

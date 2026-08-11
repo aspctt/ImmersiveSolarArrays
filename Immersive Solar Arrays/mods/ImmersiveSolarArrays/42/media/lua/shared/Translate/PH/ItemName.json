@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "Mga Bagong Pagsulong: Enerhiya Mula sa Araw",
+    "ISA.SolarPanel": "Solar Panel (bahagi)",
+    "ISA.ISAInverter": "Inverter",
+    "ISA.DeepCycleBattery": "200Ah Deep Cycle na Baterya",
+    "ISA.SuperBattery": "400Ah Deep Cycle na Baterya",
+    "ISA.WiredCarBattery": "Baterya ng Wired Car",
+    "ISA.DIYBattery": "DIY Deep Cycle na Baterya",
+    "ISA.PowerBank": "Bangko ng Baterya",
+    "ISA.SolarPanelFlat": "Flat Solar Panel",
+    "ISA.SolarPanelWall": "Wall-Mounted Solar Panel",
+    "ISA.SolarPanelMounted": "Floor-Mounted Solar Panel",
+    "ISA.SolarFailsafe": "Failsafe Trigger"
+}

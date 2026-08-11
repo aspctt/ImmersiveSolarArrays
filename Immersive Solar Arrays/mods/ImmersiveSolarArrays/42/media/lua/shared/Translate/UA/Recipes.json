@@ -1,0 +1,13 @@
+{
+    "ISA_MakeDIYBattery": "Зробіть акумулятор своїми руками",
+    "ISA_WireCarBattery": "Провідний автомобільний акумулятор",
+    "ISA_UnwireCarBattery": "Від'єднайте автомобільний акумулятор",
+    "ISA_MakeSolarRoofTile": "Зробіть плоску сонячну панель",
+    "ISA_MakeWallSolarPanel": "Зробіть настінну сонячну панель",
+    "ISA_MakeFloorSolarPanel": "Зробити сонячну панель, встановлену на підлозі",
+    "ISA_ReverseSolarPanel": "Розділіть сонячну панель на частини",
+    "ISA_CreateBatteryBank": "Створення банку акумуляторів",
+    "ISA_CreateSolarFailsafe": "Створіть Solar Failsafe",
+    "ISA_MakeSolarPanel": "Зробіть сонячну панель (частина)",
+    "ISA_MakeInverter": "Зробіть інвертор"
+}

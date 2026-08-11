@@ -1,0 +1,239 @@
+/*
+    Build 42 item scripts.
+
+    Field shapes were taken from vanilla's own generated item scripts, not carried over
+    from the build 41 originals:
+
+      ItemType = base:*     replaces "Type = ...". Build 42 does not parse "Type" at all,
+                            so every item here used to load with a null item type.
+      DisplayName           dropped. Names come from Translate/<LANG>/ItemName.json,
+                            keyed by full type.
+      LearnedRecipes        replaces "TeachedRecipes", which build 42 no longer parses.
+      Tags                  namespaced. A bare "Generator" tag matches nothing, because
+                            tag strings are compared literally after lowercasing.
+
+    ISA_maxCapacity and ISA_BatteryDegrade are not engine fields. Unrecognised keys are
+    parsed into the item's default modData, which is how the powerbank code reads them.
+*/
+module ISA
+{
+    imports { Base }
+
+    /**************************** Parts *************************************/
+    item SolarPanel
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:normal,
+        Weight = 5.0,
+        Icon = SolarPanel,
+        MetalValue = 1.0,
+        UseWhileEquipped = false,
+        WorldStaticModel = ISA.SolarPanelModel,
+        Tags = base:hasmetal,
+    }
+
+    item ISAInverter
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:normal,
+        Weight = 5.0,
+        Icon = CarBatteryCharger,
+        MetalValue = 1.0,
+        UseWhileEquipped = false,
+        WorldStaticModel = CarBatteryCharger,
+        Tags = base:hasmetal,
+    }
+
+    /**************************** Batteries *********************************/
+    item DeepCycleBattery
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:drainable,
+        Weight = 6.0,
+        Icon = CarBattery,
+        MetalValue = 1.0,
+        UseDelta = 0.00001,
+        UseWhileEquipped = false,
+        cantBeConsolided = true,
+        ConditionMax = 100,
+        DisappearOnUse = false,
+        KeepOnDeplete = true,
+        WorldStaticModel = CarBattery,
+        Tags = base:hasmetal,
+        ISA_maxCapacity = 200,
+        ISA_BatteryDegrade = 0.033,
+    }
+
+    item SuperBattery
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:drainable,
+        Weight = 8.0,
+        Icon = CarBattery,
+        MetalValue = 1.0,
+        UseDelta = 0.00001,
+        UseWhileEquipped = false,
+        cantBeConsolided = true,
+        ConditionMax = 100,
+        DisappearOnUse = false,
+        KeepOnDeplete = true,
+        WorldStaticModel = CarBattery,
+        Tags = base:hasmetal,
+        ISA_maxCapacity = 400,
+        ISA_BatteryDegrade = 0.033,
+    }
+
+    item WiredCarBattery
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:drainable,
+        Weight = 5.0,
+        Icon = CarBattery,
+        MetalValue = 1.0,
+        UseDelta = 0.00001,
+        UseWhileEquipped = false,
+        cantBeConsolided = true,
+        ConditionMax = 100,
+        DisappearOnUse = false,
+        KeepOnDeplete = true,
+        WorldStaticModel = CarBattery,
+        Tags = base:hasmetal,
+        ISA_maxCapacity = 50,
+        ISA_BatteryDegrade = 8,
+    }
+
+    item DIYBattery
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:drainable,
+        Weight = 7.0,
+        Icon = CarBattery,
+        MetalValue = 1.0,
+        UseDelta = 0.00001,
+        UseWhileEquipped = false,
+        cantBeConsolided = true,
+        ConditionMax = 100,
+        DisappearOnUse = false,
+        KeepOnDeplete = true,
+        WorldStaticModel = CarBattery,
+        Tags = base:hasmetal,
+        ISA_maxCapacity = 200,
+        ISA_BatteryDegrade = 0.125,
+    }
+
+    /**************************** Moveables *********************************/
+    item PowerBank
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:moveable,
+        Weight = 20.0,
+        Tooltip = Tooltip_Generator,
+        ConditionLowerChanceOneIn = 999,
+        WorldObjectSprite = solarmod_tileset_01_0,
+        Tags = base:heavyitem;base:generator;base:hasmetal;base:ignorezombiedensity;base:showcondition,
+    }
+
+    /*
+        Placeholder the beta branch used for an invisible generator. Kept only so that a
+        world saved against that branch still resolves the type when the troubleshoot
+        button clears the leftover objects.
+    */
+    item PowerBank_test
+    {
+        DisplayCategory = Hidden,
+        ItemType = base:normal,
+        Weight = 20.0,
+        ConditionLowerChanceOneIn = 999,
+        WorldObjectSprite = appliances_misc_01_8,
+        Tags = base:heavyitem;base:hasmetal,
+    }
+
+    item SolarPanelFlat
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:moveable,
+        Weight = 4.0,
+        WorldObjectSprite = solarmod_tileset_01_8,
+        Tags = base:hasmetal,
+    }
+
+    item SolarPanelWall
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:moveable,
+        Weight = 5.0,
+        WorldObjectSprite = solarmod_tileset_01_6,
+        Tags = base:hasmetal,
+    }
+
+    item SolarPanelMounted
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:moveable,
+        Weight = 5.0,
+        WorldObjectSprite = solarmod_tileset_01_9,
+        Tags = base:hasmetal,
+    }
+
+    item SolarFailsafe
+    {
+        DisplayCategory = Electronics,
+        ItemType = base:moveable,
+        Weight = 1.0,
+        WorldObjectSprite = solarmod_tileset_01_15,
+        Tags = base:hasmetal,
+    }
+
+    /**************************** Literature ********************************/
+    item ISAMag1
+    {
+        DisplayCategory = SkillBook,
+        ItemType = base:literature,
+        Weight = 0.1,
+        Icon = ISAMag1,
+        BoredomChange = -20,
+        StressChange = -15,
+        LearnedRecipes = ISA_CreateBatteryBank;ISA_WireCarBattery;ISA_UnwireCarBattery;ISA_MakeDIYBattery;ISA_MakeSolarRoofTile;ISA_MakeWallSolarPanel;ISA_MakeFloorSolarPanel;ISA_ReverseSolarPanel;ISA_CreateSolarFailsafe;ISA_MakeSolarPanel;ISA_MakeInverter,
+        StaticModel = Magazine,
+        WorldStaticModel = ISA.SolarMagModel,
+        Tags = base:magazine,
+        OnCreate = ItemCodeOnCreate.onCreateRecipeMagazine,
+    }
+
+    /**************************** Maps **************************************/
+    item Stash_RiversideW1
+    {
+        DisplayCategory = Cartography,
+        ItemType = base:map,
+        Weight = 0.05,
+        Icon = Map,
+        Map = ISA_Stash_RiversideW1,
+        StaticModel = MapInHand,
+        WorldStaticModel = Map,
+        Tags = base:ignorezombiedensity,
+    }
+
+    item Stash_RosewoodE1
+    {
+        DisplayCategory = Cartography,
+        ItemType = base:map,
+        Weight = 0.05,
+        Icon = Map,
+        Map = ISA_Stash_RosewoodE1,
+        StaticModel = MapInHand,
+        WorldStaticModel = Map,
+        Tags = base:ignorezombiedensity,
+    }
+
+    item Stash_Louisville1
+    {
+        DisplayCategory = Cartography,
+        ItemType = base:map,
+        Weight = 0.05,
+        Icon = Map,
+        Map = ISA_Stash_Louisville1,
+        StaticModel = MapInHand,
+        WorldStaticModel = Map,
+        Tags = base:ignorezombiedensity,
+    }
+}

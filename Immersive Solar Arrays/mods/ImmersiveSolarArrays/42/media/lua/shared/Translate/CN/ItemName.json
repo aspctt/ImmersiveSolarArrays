@@ -1,0 +1,14 @@
+{
+    "ISA.ISAMag1": "新进展：来自太阳的能源",
+    "ISA.SolarPanel": "太阳能电池板（部分）",
+    "ISA.ISAInverter": "逆变器",
+    "ISA.DeepCycleBattery": "200Ah深循环电池",
+    "ISA.SuperBattery": "400Ah深循环电池",
+    "ISA.WiredCarBattery": "有线汽车电池",
+    "ISA.DIYBattery": "DIY深循环电池",
+    "ISA.PowerBank": "电池组",
+    "ISA.SolarPanelFlat": "平板太阳能电池板",
+    "ISA.SolarPanelWall": "壁挂式太阳能电池板",
+    "ISA.SolarPanelMounted": "落地式太阳能电池板",
+    "ISA.SolarFailsafe": "故障安全触发器"
+}
