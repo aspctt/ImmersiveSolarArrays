@@ -1,63 +1,64 @@
 [h1]Immersive Solar Arrays[/h1]
 
-Harvest solar power for the needs of your base. Wire car batteries into a battery bank,
-put panels on the roof, and run your fridges and freezers off the sun instead of a
-generator that has to be fed.
+Harvest solar power for the needs of your base. Wire car batteries into a battery bank, put panels on the roof, and run your fridges and freezers off the sun instead of a generator that has to be fed.
 
-This is a fork of RadX5 and Poltergeist's Immersive Solar Arrays, rebuilt for build 42.
-Support for build 41 has been dropped.
+This is a fork of RadX5 and Poltergeist's Immersive Solar Arrays, rebuilt for build 42. Support for build 41 has been dropped.
+
+[b]Build 42.20 or newer. Singleplayer and multiplayer.[/b]
+
+[h1]What it does[/h1]
+
+[list]
+[*][b]Battery banks.[/b] Wire car batteries, build a bank, and it powers everything a generator would, in the same radius, without fuel.
+[*][b]Solar panels.[/b] Flat, wall mounted and floor mounted. Connect them to a bank and they charge it through the day. Cloud, fog, temperature and the length of the day all move the number.
+[*][b]Status window.[/b] Right click the bank. The summary tab says whether the panels are keeping up and how long the charge lasts at the current draw. The details tab lists what is actually pulling power.
+[*][b]Generator backup.[/b] A generator plugged in near a bank becomes its backup. Put a failsafe trigger on the generator's square and the bank starts it when the charge runs low, then stops it once the panels have caught up.
+[*][b]Loot and world spawns.[/b] Panels, batteries, inverters and the skill magazine spawn in the containers you would expect. Pre-placed crates and battery banks appear around the map, and five stash houses hide a solar cache behind an annotated map.
+[/list]
+
+[h1]What this fork fixes[/h1]
+
+The build 42 branch loaded and appeared to work, but most of it quietly did nothing. None of the below wrote anything to the log.
+
+[list]
+[*][b]Every string showed as its own key.[/b] Build 42 reads only JSON translations. The mod still shipped build 41 text tables, which are not loaded at all. All 27 languages converted.
+[*][b]Every item had no item type.[/b] The field that declares one was renamed, and the old name is not parsed any more.
+[*][b]Every recipe was impossible to perform.[/b] Item tags are matched literally and are namespaced now, so the tools the recipes asked for matched nothing.
+[*][b]Battery banks never became generators.[/b] Two property accessors removed in build 42 threw on every placement, so banks powered nothing, their window closed on open, and panels could not see them.
+[*][b]Base game loot tables were being corrupted.[/b] A misspelt field put a weight into vanilla item lists with no item in front of it, shifting every pair after it.
+[*][b]Stash houses errored on load[/b] and their caches were never placed.
+[*][b]Multiplayer did nothing.[/b] Plugging a generator, flipping the bank switch, connecting a panel and moving a battery all reached for a server object that does not exist on a client.
+[*][b]Tile fixes.[/b] Flat panels no longer draw over your feet, and the failsafe no longer hides under the generator it is wired to.
+[/list]
 
 [h1]Requirements[/h1]
 
-Build 42.20 or newer.
-
-[b][URL=https://steamcommunity.com/sharedfiles/filedetails/?id=2969455858]Target Square: On Load Commands[/URL][/b] is needed for the pre-placed crates that
-spawn around the map. Without it the rest of the mod still works, you just do not get
-those crates. It is safe to add or remove on an existing save.
-
-[h1]How it works[/h1]
-
-Wire a car battery, build a battery bank, then craft panels and connect them to the bank.
-The bank powers everything a generator would, in the same radius, and charges during the
-day from whatever panels it can see. Cloud, fog, temperature and the length of the day
-all move the number.
-
-Right click the bank for its status window. The summary tab tells you whether the panels
-are keeping up, and how long the charge lasts at the current draw. The details tab lists
-what is actually pulling power.
-
-A generator plugged in near the bank becomes its backup. With a failsafe trigger on the
-generator's square, the bank starts the generator when it runs low and stops it once it
-has caught up.
-
-Everything above works in both singleplayer and multiplayer.
+[b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2969455858]Target Square: On Load Commands[/url][/b] is needed for the pre-placed crates that spawn around the map. Without it everything else still works, you just do not get those crates. It is safe to add or remove on an existing save.
 
 [h1]Options[/h1]
 
-Sandbox options cover panel efficiency, how quickly batteries wear out, DIY battery
-capacity, how often the bank charges, how the power draw is calculated, loot rarity for
-each item group, world spawns and stash houses.
+Sandbox options cover panel efficiency, how quickly batteries wear out, DIY battery capacity, how often the bank charges, how power draw is calculated, loot rarity for each item group, world spawns and stash houses.
 
-Two of the recipes, making a solar panel and making an inverter from scratch, are off by
-default. Turn on expanded recipes in the sandbox options if you want them.
+Making a solar panel and making an inverter from scratch are off by default. Turn on expanded recipes in the sandbox options if you want them.
 
 [h1]Notes[/h1]
 
-Only run one version of this mod. The mod id is "ISA".
-
-Some options need a game reload, and stash houses want a new save to appear properly.
-
-Test the mod on a save you are willing to lose before adding it to a long running one.
+[list]
+[*]Only run one version of this mod. The mod id is [b]ISA[/b].
+[*]Some options need a game reload, and stash houses want a new save to appear properly.
+[*]Mods that replace the default inventory transfer or generator interactions can cause problems.
+[*]Test on a save you are willing to lose before adding it to a long running one.
+[/list]
 
 [h1]Reporting a bug[/h1]
 
-Reproduce it with only this mod enabled and write down the steps. If it only happens with
-other mods loaded, narrow it down to which ones. Check the console log for errors and post
-those along with everything else.
+Reproduce it with only this mod enabled and write down the steps. If it only happens alongside other mods, narrow down which ones. Check the console log for errors and post those with everything else.
 
 [h1]Credits[/h1]
 
-Original mod by RadX5 and Poltergeist, with thanks to everyone who contributed to it over
-the years. Licensed under the Apache License 2.0.
+Original mod by RadX5 and Poltergeist, with thanks to everyone who contributed to it over the years, translators included.
 
-Original: https://github.com/radx5Blue/ImmersiveSolarArrays
+Licensed under the Apache License 2.0.
+
+Original: [url=https://github.com/radx5Blue/ImmersiveSolarArrays]github.com/radx5Blue/ImmersiveSolarArrays[/url]
+This fork: [url=https://github.com/aspctt/ImmersiveSolarArrays]github.com/aspctt/ImmersiveSolarArrays[/url]
