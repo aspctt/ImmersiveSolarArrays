@@ -80,8 +80,8 @@ the wrong thing without writing anything to the log.
 Installing
 ----------
 
-Copy `Immersive Solar Arrays/mods/ImmersiveSolarArrays` into your Zomboid `mods`
-folder. Only run one version of this mod; the mod id is `ISA`.
+Copy `ImmersiveSolarArrays/Contents/mods/ImmersiveSolarArrays` into your Zomboid
+`mods` folder. Only run one version of this mod; the mod id is `ISA`.
 
 **Target Square: On Load Commands** is needed for the pre-placed crates that spawn
 around the map. Without it everything else still works, you just do not get those

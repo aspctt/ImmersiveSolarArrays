@@ -73,6 +73,14 @@ for root in MOD_ROOTS:
                               if os.sep + "scripts" + os.sep in p))
 
 
+# Nothing to check means the paths are wrong, not that the mod is clean. Reporting
+# success over an empty scan is how a moved folder hides every other check here.
+if not MOD_LUA:
+    fail("no-input", "no lua files under: %s" % ", ".join(MOD_ROOTS))
+if not MOD_SCRIPTS:
+    fail("no-input", "no script files under: %s" % ", ".join(MOD_ROOTS))
+
+
 # ---------------------------------------------------------------------------------------
 # Translations
 

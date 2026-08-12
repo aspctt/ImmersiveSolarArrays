@@ -58,10 +58,19 @@ $Root    = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $PSScriptRoot 'harness'
 $Build   = Join-Path $PSScriptRoot 'build'
 
+# The repository is laid out the way Steam expects a workshop item, so the mod itself is
+# several levels down.
+$ModBase  = Join-Path $Root 'ImmersiveSolarArrays\Contents\mods\ImmersiveSolarArrays'
 $ModRoots = @(
-    Join-Path $Root 'Immersive Solar Arrays\mods\ImmersiveSolarArrays\42'
-    Join-Path $Root 'Immersive Solar Arrays\mods\ImmersiveSolarArrays\common'
-) | Where-Object { Test-Path $_ }
+    Join-Path $ModBase '42'
+    Join-Path $ModBase 'common'
+)
+
+# A path that has moved would otherwise leave every check scanning nothing and still
+# reporting success, which is worse than failing.
+foreach ($root in $ModRoots) {
+    if (-not (Test-Path $root)) { throw "Mod folder not found: $root" }
+}
 
 $VersionFile = Join-Path $env:USERPROFILE 'Zomboid\version.txt'
 $Build42 = if (Test-Path $VersionFile) { (Get-Content $VersionFile | Select-Object -First 1) } else { 'unknown' }
@@ -103,6 +112,8 @@ $LuaFiles = $ModRoots |
     ForEach-Object { Get-ChildItem $_ -Filter *.lua -Recurse -File } |
     ForEach-Object { $_.FullName } |
     Sort-Object
+
+if ($LuaFiles.Count -eq 0) { throw "No lua files found under the mod folders." }
 
 $ListFile = Join-Path $Build 'lua-files.txt'
 Set-Content -Path $ListFile -Value $LuaFiles -Encoding UTF8

@@ -7,6 +7,10 @@
 # of Lua files it is handed is written next to it.
 tests/build/
 
+## Python bytecode from tools/
+__pycache__/
+*.pyc
+
 ## IDE / editor cruft
 .idea/
 .vscode/
