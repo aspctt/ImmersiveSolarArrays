@@ -78,26 +78,36 @@ do
         for i = #o.data, 1, -1 do
             local obj = o.data[i]
             if obj:getObjectIndex() == -1 then
-                table.remove(o.data,i)
+                -- Gone from the world.
+                table.remove(o.data, i)
             else
                 local container = obj:getContainer()
-                if container:getAcceptItemFunction() == nil then
+                if not container then
+                    -- Not carrying its container yet. This is the one case worth
+                    -- waiting on, so it stays in the list for a later tick.
+                elseif container:getAcceptItemFunction() ~= nil then
+                    -- Already right, so there is nothing to wait for. Dropping these
+                    -- was the missing part: a bank whose filter was fine stayed in the
+                    -- list and kept the sweep running for its whole retry window every
+                    -- day, rechecking banks that were never going to change.
+                    table.remove(o.data, i)
+                else
                     PBSystem.instance:noise("Container reset")
-
                     container:setAcceptItemFunction("AcceptItemFunction.ISA_Batteries")
-                    triggerEvent("OnContainerUpdate",obj)
-                    table.remove(o.data,i)
+                    triggerEvent("OnContainerUpdate", obj)
+                    table.remove(o.data, i)
 
-                    --shortcut for container changed, bugged transfer action
+                    -- The transfer action caches the container's filter, so anyone
+                    -- standing at this bank needs their queue cleared to pick up the
+                    -- change.
                     local players = IsoPlayer.getPlayers()
-                    for i=0, players:size() -1 do
-                        local player = players:get(i)
-                        if player ~= nil and player:getZ() == obj:getZ() and IsoUtils.DistanceToSquared(player:getX(),player:getY(),obj:getX()+0.5,obj:getY()+0.5) <= 4 then
-                            --clear both java / lua
+                    for p = 0, players:size() - 1 do
+                        local player = players:get(p)
+                        if player ~= nil and player:getZ() == obj:getZ()
+                           and IsoUtils.DistanceToSquared(player:getX(), player:getY(), obj:getX() + 0.5, obj:getY() + 0.5) <= 4 then
                             ISTimedActionQueue.clear(player)
                         end
                     end
-
                 end
             end
         end
