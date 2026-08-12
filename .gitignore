@@ -49,5 +49,6 @@ logs/
 ###############################################################################
 original-mods/
 context-files/
+photoshop/
 example-script-*.lua
 NOTES.md
