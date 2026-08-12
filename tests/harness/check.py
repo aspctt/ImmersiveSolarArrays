@@ -489,7 +489,11 @@ for root in MOD_ROOTS:
 
 for path in MOD_LUA:
     body = strip_lua_comments(read(path))
-    for module in set(re.findall(r'require\s*"([^"]+)"', body)):
+    # Both quote styles. Matching only double quotes let a wrong path in a single
+    # quoted require sit there logging "require failed" at every boot.
+    modules = set(re.findall(r'require\s*"([^"]+)"', body))
+    modules |= set(re.findall(r"require\s*'([^']+)'", body))
+    for module in modules:
         counted("requires")
         key = module.lower()
         if key in mod_lua_modules or key in game_lua_modules:

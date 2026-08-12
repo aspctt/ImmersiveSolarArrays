@@ -1,4 +1,4 @@
-require 'Maps/ISMapDefinitions'
+require "ISUI/Maps/ISMapDefinitions"
 
 local LootMaps = LootMaps
 local MapUtils = MapUtils
