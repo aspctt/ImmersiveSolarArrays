@@ -37,7 +37,17 @@ function ActivatePowerBank:getDuration()
     return 40 - 3 * self.character:getPerkLevel(Perks.Electricity)
 end
 
-function ActivatePowerBank:complete()
+--- In perform rather than complete, because the engine skips the Lua complete on a
+--- multiplayer client and this action only exists under client/, so nothing ran there.
+--- See the note in ConnectPanel.
+function ActivatePowerBank:perform()
+    self:throwSwitch()
+
+    -- needed to remove from queue / start next.
+    ISBaseTimedAction.perform(self)
+end
+
+function ActivatePowerBank:throwSwitch()
     local square = self.isoPb:getSquare()
     local instance = PBSystem.instance
     if not (square and instance) then return end

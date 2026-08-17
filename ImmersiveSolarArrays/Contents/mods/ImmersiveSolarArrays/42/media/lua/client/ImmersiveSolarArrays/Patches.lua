@@ -114,26 +114,28 @@ local function onTransferItem(character, item, srcContainer, destContainer)
     end
 end
 
-ISA.Patches["ISPlugGenerator.complete"] = function()
-    local original = ISPlugGenerator.complete
-    ISPlugGenerator.complete = function(self)
-        local result = original(self)
+-- perform, not complete. The engine skips the Lua complete on a multiplayer client,
+-- where the server runs its own copy of the action and calls complete there instead.
+-- Hooking complete meant a client plugging a generator in never told the powerbank.
+--
+-- perform runs just before complete would, so vanilla has not applied the change yet
+-- when these fire. What gets reported is therefore the action's intent rather than the
+-- generator's current state, which is the only thing a client can know at this point
+-- anyway. The server reconciles the real state on its next hourly pass.
+
+ISA.Patches["ISPlugGenerator.perform"] = function()
+    local original = ISPlugGenerator.perform
+    ISPlugGenerator.perform = function(self)
         onPlugGenerator(self.character, self.generator, self.plug and true or false)
-        return result
+        return original(self)
     end
 end
 
-ISA.Patches["ISActivateGenerator.complete"] = function()
-    local original = ISActivateGenerator.complete
-    ISActivateGenerator.complete = function(self)
-        local result = original(self)
-
-        -- Only report it if the generator actually ended up in the requested state.
-        if result and self.activate == self.generator:isActivated() then
-            onActivateGenerator(self.character, self.generator, self.activate)
-        end
-
-        return result
+ISA.Patches["ISActivateGenerator.perform"] = function()
+    local original = ISActivateGenerator.perform
+    ISActivateGenerator.perform = function(self)
+        onActivateGenerator(self.character, self.generator, self.activate)
+        return original(self)
     end
 end
 

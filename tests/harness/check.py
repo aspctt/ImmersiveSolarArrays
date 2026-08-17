@@ -404,6 +404,32 @@ if declared:
 
 
 # ---------------------------------------------------------------------------------------
+# Timed actions
+#
+# The engine does not call a timed action's Lua complete() on a multiplayer client. In
+# multiplayer the server runs its own copy of the action and its complete() is the
+# authoritative one. A mod action that only exists under client/ has no server copy, so
+# its complete() runs nowhere at all: the bar fills, the job ends, and nothing happens.
+#
+# Work belongs in perform(), which runs on whoever is performing the action either way,
+# and fires just before complete() would.
+
+for path in MOD_LUA:
+    normalised = path.replace("\\", "/")
+    if "/lua/client/" not in normalised:
+        continue
+    body = strip_lua_comments(read(path))
+    if "ISBaseTimedAction:derive" not in body:
+        continue
+    counted("client timed actions")
+    for match in re.finditer(r"function\s+([A-Za-z0-9_]+):complete\s*\(", body):
+        fail("timedaction-complete",
+             "%s: %s:complete() never runs, this action is client only and the engine "
+             "skips complete on a multiplayer client. Move the work to perform()."
+             % (rel(path), match.group(1)))
+
+
+# ---------------------------------------------------------------------------------------
 # Method names
 #
 # Every `:name(` in the mod has to be a method the engine exposes, a function the mod or

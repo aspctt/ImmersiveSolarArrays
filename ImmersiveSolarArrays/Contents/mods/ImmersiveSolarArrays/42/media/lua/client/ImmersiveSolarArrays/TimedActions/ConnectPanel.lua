@@ -78,25 +78,33 @@ function ConnectPanel:stop()
     ISBaseTimedAction.stop(self)
 end
 
+--- The job finished, so tell the server to wire the panel up.
+---
+--- This belongs in perform rather than complete. The engine skips the Lua complete
+--- entirely on a multiplayer client, because in multiplayer the server runs its own copy
+--- of the action and its complete is the authoritative one. This action only exists
+--- under client/, so the server has no copy to run, and the work was being dropped on
+--- the floor: the bar filled, the job ended, and the panel was never connected.
+--- perform is called on whoever is doing the action, in both singleplayer and
+--- multiplayer, and runs just before complete would.
 function ConnectPanel:perform()
     self.character:stopOrTriggerSound(self.sound)
 
-    ISBaseTimedAction.perform(self)
-end
-
-function ConnectPanel:complete()
     local data = self.panel:getModData()
     data.connectDelta = 100
     self.panel:transmitModData()
 
     local pb = self.powerbank
     local instance = PBSystem.instance
-    if not (pb and instance) then return end
+    if pb and instance then
+        instance:sendCommand(self.character, "connectPanel", {
+            pb = { x = pb.x, y = pb.y, z = pb.z },
+            panel = { x = self.panel:getX(), y = self.panel:getY(), z = self.panel:getZ() },
+        })
+    end
 
-    instance:sendCommand(self.character, "connectPanel", {
-        pb = { x = pb.x, y = pb.y, z = pb.z },
-        panel = { x = self.panel:getX(), y = self.panel:getY(), z = self.panel:getZ() },
-    })
+    -- needed to remove from queue / start next.
+    ISBaseTimedAction.perform(self)
 end
 
 ISA.ConnectPanel = ConnectPanel
