@@ -34,12 +34,34 @@ function ConnectPanel:isValid()
     return self.panel:getObjectIndex() ~= -1
 end
 
+--- One in-game minute, expressed in the units maxTime is counted in.
+---
+--- A timed action advances by GameTime.getMultiplier() per frame, which is about one at
+--- 60fps and scales with fast forward but not with the day length. So maxTime is frames,
+--- and converting from in-game minutes has to bring the day length in by hand.
+---
+--- One in-game day is minutesPerDay real minutes, which is minutesPerDay * 3600 frames,
+--- and holds 1440 in-game minutes. That leaves 2.5 frames per in-game minute for every
+--- real minute of day length.
+local FRAMES_PER_INGAME_MINUTE_PER_DAYLENGTH = 2.5
+
+--- Full time at Electrical 3, about a third of it at 10, about a quarter longer at 0.
+local function skillFactor(level)
+    return 1 - 0.095 * (level - 3)
+end
+
 function ConnectPanel:getDuration()
     if self.character:isTimedActionInstant() then
         return 1
     end
-    --base time in minutes at level 3, ~1/3 at level 10
-    return SandboxVars.ISA.ConnectPanelMin * (1 - 0.095 * (self.character:getPerkLevel(Perks.Electricity) - 3)) * 2 * getGameTime():getMinutesPerDay()
+
+    -- Day length is read rather than assumed, so the job takes the same number of
+    -- in-game minutes whether a day is fifteen real minutes or three real hours.
+    local minutesPerDay = getGameTime():getMinutesPerDay()
+    if not minutesPerDay or minutesPerDay <= 0 then minutesPerDay = 60 end
+
+    local minutes = SandboxVars.ISA.ConnectPanelMin * skillFactor(self.character:getPerkLevel(Perks.Electricity))
+    return minutes * FRAMES_PER_INGAME_MINUTE_PER_DAYLENGTH * minutesPerDay
 end
 
 function ConnectPanel:start()

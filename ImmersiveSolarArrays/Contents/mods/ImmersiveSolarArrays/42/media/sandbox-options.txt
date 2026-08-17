@@ -43,9 +43,17 @@ option ISA.LRMMisc {
 	page = ISA, translation = ISA_LRMMisc, valueTranslation = ISA_LRMMisc,
 	type = double, min = 0, max = 100, default = 1,
 }
+/*
+    In-game minutes to connect one panel, at Electricity 3. Roughly a third of that at
+    10, roughly a quarter longer at 0.
+
+    Was 30, which is two and a half real minutes of standing still at the default day
+    length, on top of the panel never actually connecting. Ten is still the longest
+    thing this mod asks of you, and the job resumes where it left off if interrupted.
+*/
 option ISA.ConnectPanelMin {
 	page = ISA, translation = ISA_ConnectPanelMin,
-	type = integer, min = 1, max = 1440, default = 30,
+	type = integer, min = 1, max = 1440, default = 10,
 }
 option ISA.enableExpandedRecipes {
     page = ISA, translation = ISA_enableExpandedRecipes,
