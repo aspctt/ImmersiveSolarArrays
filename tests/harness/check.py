@@ -160,40 +160,154 @@ for directory in mod_translate_dirs:
 
 # ---------------------------------------------------------------------------------------
 # Textures
+#
+# getSharedTexture throws the path away before it looks anything up. It drops a .png
+# extension and every directory, asks the texture packs for the bare name left over, and
+# only falls back to a file on disk when no pack claims it. A path ending in .txt or
+# containing /mods/ skips the pack lookup entirely.
+#
+# So a texture moves into a .pack with no code change, and a name with no directory at
+# all resolves against media/textures, which is where an item Icon and a model texture
+# both land.
 
-texture_names = set()
-packs = os.path.join(GAME, "media", "texturepacks")
-pack_blob = b""
-if os.path.isdir(packs):
-    for name in os.listdir(packs):
-        if name.endswith(".pack"):
-            with open(os.path.join(packs, name), "rb") as fh:
-                pack_blob += fh.read()
 
-game_textures = os.path.join(GAME, "media", "textures")
+def pack_sprites(path):
+    """Sprite names in one .pack, without decoding any of the images.
+
+    Two layouts. The newer one opens with "PZPK" and a version, and puts a byte length in
+    front of each page's image. The older one opens straight at the page count and ends
+    each image with the four bytes EF BE AD DE instead, which is why the game scans for
+    them a byte at a time.
+    """
+    names = []
+    with open(path, "rb") as fh:
+        def read_int():
+            raw = fh.read(4)
+            if len(raw) < 4:
+                raise EOFError("ran out of file")
+            return int.from_bytes(raw, "little")
+
+        version = 0
+        if fh.read(4) == b"PZPK":
+            version = read_int()
+        else:
+            fh.seek(0)
+
+        for _ in range(read_int()):
+            fh.read(read_int())                 # page name
+            count = read_int()
+            read_int()                          # alpha flag
+            for _ in range(count):
+                names.append(fh.read(read_int()).decode("latin-1"))
+                fh.seek(32, 1)                  # x, y, w, h, offX, offY, cellW, cellH
+            if version:
+                fh.seek(read_int(), 1)          # the page's png
+            else:
+                carry = b""
+                while True:
+                    chunk = fh.read(1 << 16)
+                    if not chunk:
+                        raise EOFError("no end-of-image marker")
+                    at = (carry + chunk).find(b"\xef\xbe\xad\xde")
+                    if at != -1:
+                        fh.seek(at + 4 - len(carry) - len(chunk), 1)
+                        break
+                    carry = chunk[-3:]
+    return names
+
+
+# The mod's own packs first, so a name it defines is reported against the mod rather than
+# against whichever base game pack happens to share it.
+PACK_FILES = []
+for root in MOD_ROOTS:
+    PACK_FILES.extend(sorted(walk(os.path.join(root, "media", "texturepacks"), ".pack")))
+MOD_PACK_COUNT = len(PACK_FILES)
+
+game_packs = os.path.join(GAME, "media", "texturepacks")
+if os.path.isdir(game_packs):
+    PACK_FILES.extend(sorted(os.path.join(game_packs, name)
+                             for name in os.listdir(game_packs) if name.endswith(".pack")))
+
+PACK_SPRITES = {}
+MOD_SPRITES = set()
+for index, path in enumerate(PACK_FILES):
+    try:
+        sprites = pack_sprites(path)
+    except (EOFError, ValueError, UnicodeDecodeError) as exc:
+        fail("pack-format", "%s: could not be read (%s)" % (rel(path), exc))
+        continue
+    if index < MOD_PACK_COUNT:
+        counted("packed sprites", len(sprites))
+        MOD_SPRITES.update(sprites)
+    for sprite in sprites:
+        PACK_SPRITES.setdefault(sprite, os.path.basename(path))
+
+
+def texture_sprite(path):
+    """The pack sprite a texture path resolves to, or None if it skips the packs."""
+    path = path.replace("\\", "/")
+    if path.endswith(".txt") or "/mods/" in path:
+        return None
+    if path.endswith(".png"):
+        path = path[:path.rindex(".")]
+    return path[path.rfind("/") + 1:]
+
+
+def texture_file(path):
+    """The loose file a texture path falls back to, or None."""
+    path = path.replace("\\", "/")
+    if not path.lower().startswith("media/"):
+        path = "media/textures/" + path + ".png"
+    parts = path.split("/")
+    for root in MOD_ROOTS:
+        candidate = os.path.join(root, *parts)
+        if os.path.exists(candidate):
+            return candidate
+    candidate = os.path.join(GAME, *parts)
+    return candidate if os.path.exists(candidate) else None
 
 
 def texture_exists(path):
-    path = path.replace("\\", "/")
-    if path.lower().startswith("media/"):
-        tail = path[len("media/"):]
-        for root in MOD_ROOTS:
-            if os.path.exists(os.path.join(root, "media", *tail.split("/"))):
-                return True
-        if os.path.exists(os.path.join(GAME, "media", *tail.split("/"))):
-            return True
-        return False
-    # A bare name is looked up in the texture packs.
-    return path.encode() in pack_blob
+    sprite = texture_sprite(path)
+    return (sprite in PACK_SPRITES) or texture_file(path) is not None
 
 
 GETTEXTURE = re.compile(r'getTexture\(\s*"([^"]+)"')
 for path in MOD_LUA:
     body = strip_lua_comments(read(path))
-    for texture in set(GETTEXTURE.findall(body)):
+    for texture in sorted(set(GETTEXTURE.findall(body))):
         counted("getTexture paths")
         if not texture_exists(texture):
             fail("texture-path", "%s: getTexture(\"%s\") does not resolve" % (rel(path), texture))
+
+
+# Icon = X is only ever half a name. The engine looks for Item_X, in the packs first and
+# then in media/textures, and quietly substitutes a question mark when neither has it.
+ICON = re.compile(r"^\s*Icon\s*=\s*([^,\n]+?)\s*,", re.M)
+for path in MOD_SCRIPTS:
+    body = strip_script_comments(read(path))
+    for icon in sorted(set(ICON.findall(body))):
+        counted("item icons")
+        if not texture_exists("Item_" + icon):
+            fail("item-icon", "%s: Icon = %s has no Item_%s in the mod, a pack or the game"
+                 % (rel(path), icon, icon))
+
+
+# A model binds its texture whole and samples it with the mesh's own uvs, which run 0 to 1
+# across the entire image. Point one at a packed sprite and it draws a slice of every
+# other sprite on that page instead, without an error anywhere. Model textures stay loose,
+# which is also why the base game ships its world item textures as thousands of files.
+MODEL_TEXTURE = re.compile(r"^\s*texture\s*=\s*([^,\n]+?)\s*,", re.M)
+for path in MOD_SCRIPTS:
+    body = strip_script_comments(read(path))
+    for texture in sorted(set(MODEL_TEXTURE.findall(body))):
+        counted("model textures")
+        sprite = texture_sprite(texture)
+        if sprite in MOD_SPRITES:
+            fail("model-texture", "%s: texture = %s is packed in %s, so the model would "
+                 "sample the whole atlas" % (rel(path), texture, PACK_SPRITES[sprite]))
+        elif texture_file(texture) is None:
+            fail("model-texture", "%s: texture = %s resolves to no file" % (rel(path), texture))
 
 
 # ---------------------------------------------------------------------------------------

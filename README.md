@@ -109,6 +109,26 @@ Nothing it looks for crashes at load, which is the point. See
 [tests/README.md](tests/README.md) for what each check exists to catch.
 
 
+Textures
+--------
+
+Everything the mod draws through the sprite renderer ships in one file,
+`common/media/texturepacks/solarmod_tileset.pack`: the tiles, the UI icons and the
+item icons. Source art for the icons lives in `tools/textures`.
+
+```
+python tools/pack_textures.py
+```
+
+Rebuilds the pack from the tiles already in it plus every PNG in that folder. A
+sprite is named after the file it replaces, which is all the engine looks at, so
+nothing in the Lua or the item scripts refers to a path any more.
+
+The two model textures stay loose in `common/media/textures`. A model binds its
+texture whole and samples it with uvs that run across the entire image, so a
+packed one would draw a slice of every other sprite on the page.
+
+
 Credits
 -------
 

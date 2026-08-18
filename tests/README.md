@@ -29,7 +29,10 @@ nothing, and a tag no item carries makes a recipe quietly impossible to perform.
 | --- | --- |
 | `translation-key` | Every literal `getText("...")` resolves, in the mod's English JSON or the game's. Build 42 reads only `Translate/<LANG>/<File>.json`; the build 41 `.txt` tables are not loaded at all, so the whole mod rendered as raw keys. |
 | `translation-extra` | A language carries a key English does not, which usually means a stale entry nothing reads. Missing keys are reported as a note rather than a failure. |
-| `texture-path` | Every `getTexture` path resolves against the mod's own trees, the game's `media`, or the texture packs. |
+| `texture-path` | Every `getTexture` path resolves. The engine drops the extension and every directory first, asks the texture packs for the bare name, and only then looks for a file, so this follows the same order across the mod's packs, the mod's trees, the game's packs and the game's `media`. |
+| `item-icon` | `Icon = X` is half a name. The engine wants `Item_X` and quietly draws a question mark when nothing has it. |
+| `model-texture` | A model texture is loose rather than packed. A model binds its texture whole and samples it with uvs that run 0 to 1 across the whole image, so a packed one draws a slice of every other sprite on that page, with no error anywhere. |
+| `pack-format` | Every `.pack` in the mod parses. Both layouts are read: the newer one opens with `PZPK` and puts a length in front of each page's image, the older one ends each image with `EF BE AD DE` instead. |
 | `item-legacy-field` | `Type`, `DisplayName` and `TeachedRecipes` are build 41 fields. `Type` is not parsed at all now, which leaves `getItemType()` null. |
 | `item-type` | `ItemType` is one of the values the engine actually defines. |
 | `item-tag` | Item tags are namespaced. Tag strings are compared literally after lowercasing, so a bare `Generator` matches nothing. |
