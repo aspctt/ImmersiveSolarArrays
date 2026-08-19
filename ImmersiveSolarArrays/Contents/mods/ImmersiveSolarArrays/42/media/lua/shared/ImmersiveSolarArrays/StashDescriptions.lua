@@ -194,11 +194,64 @@ function Stash.insertItems(addMapItems)
     end
 end
 
+--- Put the mod's stashes back into the list the engine annotates maps from.
+---
+--- StashSystem keeps two lists. allStashes is every stash it knows about, rebuilt from
+--- the Lua descriptions each time the world starts. possibleStashes is the ones still
+--- worth finding, and checkStashItem refuses to annotate a map for any stash that is not
+--- in it. IsoWorld.init fills both from Lua, and then loads the map metadata, which
+--- replaces possibleStashes wholesale with whatever the save stored.
+---
+--- On a world that already existed, that second step drops every stash this mod added.
+--- The map items still spawn, because they come from the loot tables, they just arrive
+--- with nothing drawn on them: the right patch of Kentucky and not one marker.
+---
+--- Runs after the world is up, and only adds back a stash whose map has not been read
+--- and whose building has not been walked into, so nothing points at an emptied house.
+function Stash.restorePossible()
+    if isClient() then return end
+
+    local possible = StashSystem.getPossibleStashes()
+    if not possible then return end
+
+    local present = {}
+    for i = 1, possible:size() do
+        present[possible:get(i - 1):getName()] = true
+    end
+
+    local read = {}
+    local alreadyRead = StashSystem.getAlreadyReadMap()
+    if alreadyRead then
+        for i = 1, alreadyRead:size() do
+            read[alreadyRead:get(i - 1)] = true
+        end
+    end
+
+    local metaGrid = getWorld():getMetaGrid()
+    local restored = 0
+    for stashMap in pairs(Stash.descriptions) do
+        local name = stashMap.name
+        if not present[name] and not read[name] then
+            local room = metaGrid:getRoomAt(stashMap.buildingX, stashMap.buildingY, 0)
+            local building = room and room:getBuilding()
+            if building and not building:isHasBeenVisited() then
+                possible:add(StashBuilding.new(name, stashMap.buildingX, stashMap.buildingY))
+                restored = restored + 1
+            end
+        end
+    end
+
+    if restored > 0 then
+        print("ISA: restored " .. restored .. " stash house(s) the save had not heard of")
+    end
+end
+
 function Stash.sandbox(newGame)
     local mode = SandboxVars.ISA.StashMode
     if mode == 1 then return end
 
     Stash.insertItems(mode ~= 4)
+    Events.OnGameStart.Add(Stash.restorePossible)
 
     if mode ~= 2 and newGame and not isClient() then
         ISA.queueFunction("OnTick", Stash.prepareBuildingStash)
