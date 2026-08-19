@@ -46,7 +46,7 @@ nothing, and a tag no item carries makes a recipe quietly impossible to perform.
 | `sandbox-var` | Every `SandboxVars.ISA.x` the Lua reads is a declared option. |
 | `method-name` | Every `:name(` is a method this build exposes, a function the mod or game defines in Lua, or a Lua string method. `PropertyContainer.Is` and `.Val` were real in build 41 and are gone in build 42; Lua calling a method that is not there does not fail until the line runs, so placing a battery bank threw every single time and nothing noticed until the game did. Names only, not per class, since a call site does not say what type it is calling on. |
 | `require-path` | Every `require` resolves to a Lua file in the mod or the game. Case matters on Linux servers, and the build 41 tree had several that pointed at moved files. |
-| `require-undeclared` | A require into a separate mod is only allowed while `mod.info` still declares that mod in `require=`, so dropping the dependency cannot go unnoticed. |
+| `require-undeclared` | A require into a separate mod is only allowed while `mod.info` still names that mod in `require=` or `loadModAfter=`, so dropping the dependency cannot go unnoticed. Which of the two matters: `require=` makes this mod unavailable when the other is absent, and the mod selector then refuses to activate it without saying why, so an optional dependency belongs in `loadModAfter=`. |
 
 ## Calibration
 

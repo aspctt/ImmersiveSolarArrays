@@ -609,10 +609,10 @@ for path in MOD_LUA:
 # Modules that come from a separate mod the player installs. Not in this repository,
 # because that mod is not ours to redistribute, and not in the game either.
 #
-# Two gates rather than a bare allowlist. The mod that provides it has to still be
-# declared in mod.info, so dropping the dependency cannot go unnoticed, and if a copy
-# happens to be sitting in original-mods the module name is checked against it, so a
-# typo in the require is caught rather than waved through.
+# Two gates rather than a bare allowlist. The mod that provides it has to still be named
+# in mod.info, so dropping the dependency cannot go unnoticed, and if a copy happens to be
+# sitting in original-mods the module name is checked against it, so a typo in the require
+# is caught rather than waved through.
 EXTERNAL_MODULES = {
     "!_targetsquare_onload": "TargetSquareOnLoad",
 }
@@ -628,12 +628,19 @@ if os.path.isdir(reference_root):
             if folder in normalised:
                 reference_modules.add(normalised.split(folder, 1)[1][:-4].lower())
 
-declared_requires = set()
+# require= and loadModAfter= both name another mod, and the engine strips backslashes out
+# of either before splitting on commas, so \Mod1\,\Mod2 and Mod1,Mod2 are the same list.
+#
+# The difference is what happens when that mod is absent. require= makes this one
+# unavailable, and the mod selector then refuses to activate it without printing anything,
+# which reads to the player as the list bouncing them back. loadModAfter= only orders the
+# two when both are present. An optional dependency belongs in the second.
+declared_dependencies = set()
 for root in MOD_ROOTS:
     for info in walk(root, "mod.info"):
-        for match in re.finditer(r"^require=(.+)$", read(info), flags=re.M):
+        for match in re.finditer(r"^(?:require|loadModAfter)=(.+)$", read(info), flags=re.M):
             for mod_id in match.group(1).replace("\\", "").split(","):
-                declared_requires.add(mod_id.strip())
+                declared_dependencies.add(mod_id.strip())
 
 for path in MOD_LUA:
     body = strip_lua_comments(read(path))
@@ -648,10 +655,10 @@ for path in MOD_LUA:
             continue
         provider = EXTERNAL_MODULES.get(key)
         if provider:
-            if provider not in declared_requires:
+            if provider not in declared_dependencies:
                 fail("require-undeclared",
-                     "%s: require \"%s\" comes from %s, which no mod.info declares in require="
-                     % (rel(path), module, provider))
+                     "%s: require \"%s\" comes from %s, which no mod.info names in "
+                     "require= or loadModAfter=" % (rel(path), module, provider))
             elif reference_modules and key not in reference_modules:
                 fail("require-external",
                      "%s: require \"%s\" is not a module the reference copy of %s provides"

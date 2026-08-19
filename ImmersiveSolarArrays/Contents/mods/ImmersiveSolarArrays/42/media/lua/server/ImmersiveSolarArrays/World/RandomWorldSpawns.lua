@@ -1,6 +1,13 @@
 if isClient() then return end
 
 local ISA = require "ImmersiveSolarArrays/Utilities"
+
+-- Nil unless Target Square: On Load Commands is installed. That mod is optional, it only
+-- provides the pre-placed crates, so this require is allowed to come back empty: the
+-- engine warns about the missing file and hands back nil rather than throwing, and
+-- InitSpawns below checks for it. mod.info says loadModAfter rather than require for the
+-- same reason. A require line there would make the game refuse to enable this mod at all
+-- without it, with no message saying why.
 local TargetSquare_OnLoad = require "!_TargetSquare_OnLoad"
 local sandbox = SandboxVars.ISA
 
