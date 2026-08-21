@@ -90,6 +90,14 @@ local function onActivateGenerator(character, generator, activate)
     end
 end
 
+--- Tell the bank a battery went in or came out, so its totals move straight away.
+---
+--- Singleplayer only in practice, and deliberately not relied on. ISInventoryTransferAction
+--- guards its call with `if not isClient()`, so on a multiplayer client this never runs:
+--- the item travels through the item transaction system and the server applies it with no
+--- Lua of ours in the way. The bank recounts its own container on every pass and when the
+--- status window opens, which is what actually keeps multiplayer honest. This is only here
+--- to make the number move the instant the player drops a battery in.
 ---@param character IsoPlayer
 ---@param item InventoryItem
 local function onTransferItem(character, item, srcContainer, destContainer)

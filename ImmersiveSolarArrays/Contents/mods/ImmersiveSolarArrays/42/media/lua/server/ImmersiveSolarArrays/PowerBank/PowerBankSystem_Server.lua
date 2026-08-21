@@ -135,6 +135,26 @@ function PBSystem.updatePowerbanks()
         ---@type PowerBankObject_Server
         local pb = self.system:getObjectByIndex(i):getModData()
         local isopb = pb:getIsoObject()
+
+        -- Count what is actually in the bank rather than trusting the running total.
+        --
+        -- That total is kept up to date by the moveBattery command, which the client
+        -- sends from its hook on the vanilla transfer action. In multiplayer that hook
+        -- never runs: ISInventoryTransferAction only calls transferItem when isClient is
+        -- false, so the client skips it and the server moves the item through the item
+        -- transaction system instead, where no Lua of ours sits.
+        --
+        -- A bank on a server therefore reported no batteries however many were in it, and
+        -- it did more than misreport. maxcapacity stayed at zero, so modCharge below came
+        -- out zero, and updateBatteries wrote that straight back into every battery on the
+        -- next pass. The bank drained the things it was supposed to be charging.
+        --
+        -- The container is the truth and it is a handful of items, so read it.
+        local container = isopb and isopb:getContainer()
+        if container then
+            pb:calculateBatteryStats(container)
+        end
+
         local drain = 0
         if pb:shouldDrain(isopb) then
             pb:updateDrain()

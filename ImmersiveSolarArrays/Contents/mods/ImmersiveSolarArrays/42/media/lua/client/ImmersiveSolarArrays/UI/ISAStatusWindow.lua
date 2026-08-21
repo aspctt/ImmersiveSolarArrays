@@ -52,6 +52,15 @@ function ISAStatusWindow.OnOpenPanel(player,square)
 	instance.square = square
 	instance.luaPB = ISA.PBSystem_Client:getLuaObjectAt(square:getX(),square:getY(),square:getZ())
 
+	-- Ask the server to recount before anything is drawn, so the window opens on the
+	-- truth rather than on whatever the running total last said. It matters most in
+	-- multiplayer, where nothing tells the bank a battery moved until its next pass,
+	-- but the count can drift in a single player game too and this settles it either way.
+	if instance.luaPB then
+		ISA.PBSystem_Client:sendCommand(instance.playerObj, "countBatteries",
+			{ x = instance.luaPB.x, y = instance.luaPB.y, z = instance.luaPB.z })
+	end
+
 	instance:addToUIManager()
 end
 
