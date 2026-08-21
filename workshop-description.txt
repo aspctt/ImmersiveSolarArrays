@@ -16,6 +16,16 @@ This is a fork of RadX5 and Poltergeist's Immersive Solar Arrays, rebuilt for bu
 [*][b]Loot and world spawns.[/b] Panels, batteries, inverters and the skill magazine spawn in the containers you would expect. Pre-placed crates and battery banks appear around the map, and five stash houses hide a solar cache behind an annotated map.
 [/list]
 
+[h1]Putting one up[/h1]
+Panels and battery banks are moveables rather than build menu entries, so nothing from this mod shows up under construction.
+[list]
+[*]Craft a panel in the crafting menu. The loose solar panel you find as loot is a part, not something you can install, so turn it into a roof tile, a wall panel or a floor panel first.
+[*]Put the crafted panel in your main inventory. Not in a bag, and not in your hands, or the next step will not appear.
+[*]Right click it, choose Place Object, and place it outdoors.
+[*]Right click the battery bank, pick Connect panels, and click the panel.
+[/list]
+You need a screwdriver on you and Electrical 3 to place a panel or pick one back up, the same as the crafting recipes ask for.
+
 [h1]What this fork fixes[/h1]
 
 The build 42 branch loaded and appeared to work, but most of it quietly did nothing. None of the below wrote anything to the log.
