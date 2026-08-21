@@ -41,6 +41,24 @@ What it does
   world spawns and stash houses.
 
 
+Putting one up
+--------------
+
+Panels and battery banks are moveables, not build menu entries, so nothing from
+this mod appears under construction. The order is:
+
+1. Craft a panel from the crafting menu. The loose solar panel you find as loot
+   is a part, not something you can install. Turn it into a roof tile, a wall
+   panel or a floor panel first.
+2. Put the crafted panel in your main inventory. Not in a bag and not in your
+   hands, or the option below will not show.
+3. Right click it and choose **Place Object**, then place it outdoors.
+4. Right click the battery bank, pick **Connect panels**, and click the panel.
+
+You need a screwdriver on you and Electrical 3 to place a panel or pick one back
+up, which is the same requirement as the crafting recipes.
+
+
 What is fixed in this fork
 --------------------------
 

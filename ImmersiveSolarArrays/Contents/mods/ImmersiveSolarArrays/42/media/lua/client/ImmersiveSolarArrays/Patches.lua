@@ -123,10 +123,27 @@ end
 -- generator's current state, which is the only thing a client can know at this point
 -- anyway. The server reconciles the real state on its next hourly pass.
 
+--- Run our half of a wrapped action without letting it take the vanilla half down.
+---
+--- These wrappers sit in front of actions this mod does not own. Anything thrown in here
+--- propagates out of perform, so vanilla never applies the change, and the only thing the
+--- player sees is the progress bar filling and the generator not turning on, not plugging
+--- in, not unplugging. Nothing in the log points at the generator either, because the
+--- error is in the powerbank bookkeeping.
+---
+--- The bank being out of step is recoverable, it is reconciled on the next hourly pass.
+--- A generator that cannot be switched on is not. So the vanilla action always runs.
+local function safely(what, fn, ...)
+    local ok, err = pcall(fn, ...)
+    if not ok then
+        print("ISA: " .. what .. " failed, the generator itself was not affected: " .. tostring(err))
+    end
+end
+
 ISA.Patches["ISPlugGenerator.perform"] = function()
     local original = ISPlugGenerator.perform
     ISPlugGenerator.perform = function(self)
-        onPlugGenerator(self.character, self.generator, self.plug and true or false)
+        safely("plugGenerator", onPlugGenerator, self.character, self.generator, self.plug and true or false)
         return original(self)
     end
 end
@@ -134,7 +151,7 @@ end
 ISA.Patches["ISActivateGenerator.perform"] = function()
     local original = ISActivateGenerator.perform
     ISActivateGenerator.perform = function(self)
-        onActivateGenerator(self.character, self.generator, self.activate)
+        safely("activateGenerator", onActivateGenerator, self.character, self.generator, self.activate)
         return original(self)
     end
 end
@@ -145,7 +162,7 @@ ISA.Patches["ISTransferAction.transferItem"] = function()
         local result = original(self, character, item, srcContainer, destContainer, dropSquare)
 
         if result ~= nil then
-            onTransferItem(character, item, srcContainer, destContainer)
+            safely("moveBattery", onTransferItem, character, item, srcContainer, destContainer)
         end
 
         return result
