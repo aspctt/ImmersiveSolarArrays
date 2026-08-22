@@ -38,7 +38,7 @@ What it does
 
 - **Sandbox options** - Panel efficiency, battery wear, DIY battery capacity,
   charge frequency, how power draw is calculated, loot rarity per item group,
-  world spawns and stash houses.
+  world spawns, stash houses and expanded recipes.
 
 
 Putting one up
@@ -57,6 +57,12 @@ this mod appears under construction. The order is:
 
 You need a screwdriver on you and Electrical 3 to place a panel or pick one back
 up, which is the same requirement as the crafting recipes.
+
+Making a solar panel and making an inverter from scratch are off by default.
+Both recipes still appear in the crafting menu with the option off, and every
+ingredient reads as missing however many of them you are carrying, which is the
+gate rather than a fault. Turn on **Expanded Recipes** in the sandbox options to
+use them. Otherwise both are things you find rather than build.
 
 
 What is fixed in this fork
