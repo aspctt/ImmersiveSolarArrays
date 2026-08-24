@@ -119,20 +119,27 @@ function PowerBank:updateDrain()
     end
 end
 
+--- Write the bank's charge level into every battery it holds.
+---
+--- Anything that is not a battery is left exactly where it is. This used to pull the item
+--- out and drop it on the floor whenever isItemAllowed said no, and that answer is not
+--- only about the item: ItemContainer.isItemAllowed calls the container's filter through
+--- protectedCallBoolean and treats anything other than a returned true, a throw included,
+--- as a refusal. One bad call therefore emptied a bank onto the ground, and on a server
+--- the usual sweep then clears the dropped items away and the batteries are gone.
+---
+--- Reading the item's own capacity is the same test calculateBatteryStats already makes,
+--- it cannot fail on someone else's function, and the worst it can do is ignore something
+--- rather than destroy it. Nothing that is not a battery can get in here anyway: the
+--- container carries its own accept filter.
 ---@param container ItemContainer
 ---@param modCharge number
 function PowerBank:updateBatteries(container, modCharge)
     local items = container:getItems()
     for i = items:size() - 1, 0, -1  do
         local item = items:get(i)
-        -- bugfix
-        if container:isItemAllowed(item) then
+        if item:getModData().ISA_maxCapacity ~= nil then
             item:setCurrentUsesFloat(modCharge)
-        else
-            container:Remove(item)
-            local square = self:getSquare()
-            if square then square:AddWorldInventoryItem(item, 0.5, 0.5, 0) end
-            print("ISA: Removed invalid item from Battery Bank. ->", item:getFullType())
         end
     end
     -- container:setDirty(true)
