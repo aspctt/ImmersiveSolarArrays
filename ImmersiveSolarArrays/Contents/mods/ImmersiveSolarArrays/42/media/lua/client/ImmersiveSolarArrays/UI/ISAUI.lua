@@ -40,11 +40,57 @@ end
 
 local _powerbank
 
+--- The generator vanilla would have offered its menu on, had the bank not been there.
+---
+--- fetchVars.generator is one slot and the engine writes it for every IsoGenerator it
+--- walks, so the last one seen wins. A bank is an IsoGenerator, which means a real
+--- generator standing within the same right click loses the slot to it whenever the
+--- bank comes later in the walk. Taking the bank out is what stops vanilla offering
+--- Plug in and Turn on for a battery, and it used to leave the slot empty: the
+--- generator beside it then lost its whole submenu, and with it anything another mod
+--- hangs there. Which is the arrangement this mod's own failsafe asks for, a generator
+--- parked next to a bank.
+---
+--- The engine's order, mirrored: each entry in worldobjects, then that entry's whole
+--- square in index order, each square walked once. Same list and same rule, so the
+--- generator handed back is the one vanilla itself would have settled on with no bank
+--- in the way, rather than a menu about one machine acting on another.
+---@param worldobjects table
+---@return IsoGenerator?
+local function otherGeneratorInMenu(worldobjects)
+    if not worldobjects then return nil end
+
+    local found, seen = nil, {}
+    local function consider(object)
+        if object and instanceof(object, "IsoGenerator")
+            and not ISA.WorldUtil.objectIsType(object, "PowerBank") then
+            found = object
+        end
+    end
+
+    for _, object in ipairs(worldobjects) do
+        consider(object)
+        -- worldobjects is whatever the caller collected rather than a list vanilla
+        -- curated, so an entry is not promised to be an IsoObject at all. One bad entry
+        -- costs its square, not the menu.
+        local ok, square = pcall(function() return object and object:getSquare() end)
+        if ok and square and not seen[square] then
+            seen[square] = true
+            local objects = square:getObjects()
+            for i = 0, objects:size() - 1 do
+                consider(objects:get(i))
+            end
+        end
+    end
+
+    return found
+end
+
 function UI.OnPreFillWorldObjectContextMenu(player, context, worldobjects, test)
     local generator = ISWorldObjectContextMenu.fetchVars.generator
     if generator ~= nil and ISA.WorldUtil.objectIsType(generator, "PowerBank") then
         _powerbank = generator
-        ISWorldObjectContextMenu.fetchVars.generator = nil
+        ISWorldObjectContextMenu.fetchVars.generator = otherGeneratorInMenu(worldobjects)
     end
 end
 
