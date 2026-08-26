@@ -118,8 +118,11 @@ function PBSystem.EveryDays()
         ---@type PowerBankObject_Server
         local pb = self.system:getObjectByIndex(i):getModData()
         local isopb = pb:getIsoObject()
-        if isopb then
-            local inv = isopb:getContainer()
+        -- A bank whose container has gone, or has not arrived yet, has no batteries to
+        -- age and nothing to count. Both of these walk the container, so neither has
+        -- anything to say without one.
+        local inv = isopb and isopb:getContainer()
+        if inv then
             pb:degradeBatteries(inv) ---TODO x days passed
             pb:calculateBatteryStats(inv)
             -- isopb:sendObjectChange("containers")
@@ -168,7 +171,13 @@ function PBSystem.updatePowerbanks()
         local modCharge = pb.maxcapacity > 0 and charge / pb.maxcapacity or 0
         pb.charge = charge
         if isopb then
-            pb:updateBatteries(isopb:getContainer(), modCharge)
+            -- The one read from above, not a second one. Counting the batteries was
+            -- already guarded and writing the charge back was not, so a bank that had
+            -- lost its container was counted as empty and then handed that same nil to
+            -- updateBatteries, which walks it.
+            if container then
+                pb:updateBatteries(container, modCharge)
+            end
             pb:updateGenerator(dCharge)
             pb:updateSprite(modCharge)
         end

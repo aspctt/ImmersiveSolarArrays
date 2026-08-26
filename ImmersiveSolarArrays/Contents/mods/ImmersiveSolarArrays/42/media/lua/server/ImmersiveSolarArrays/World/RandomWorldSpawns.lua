@@ -71,8 +71,14 @@ function RandomWorldSpawns.placePowerBank(square, spriteName, index)
     object:setSquare(square)
     object:getModData().generatorFullType = fullType
     object:createContainersFromSpriteProperties()
-    fillFromLootTables(object:getContainer())
-    object:getContainer():setExplored(true)
+    -- Guarded for the same reason as the conversion in WorldUtil: a sprite that gives no
+    -- container leaves this nil, and taking the spawn down here would put a bank in the
+    -- world that no chunk load ever finishes.
+    local container = object:getContainer()
+    if container then
+        fillFromLootTables(container)
+        container:setExplored(true)
+    end
     square:AddSpecialObject(object, index)
     object:transmitCompleteItemToClients()
     object:setCondition(100)

@@ -45,7 +45,14 @@ do
             if gen then
                 local isoPb = PBSystem.instance:getIsoObjectOnSquare(o.data[i])
                 if isoPb then
-                    isoPb:getContainer():setAcceptItemFunction("AcceptItemFunction.ISA_Batteries")
+                    -- The container arrives after the object on a multiplayer client, so
+                    -- it is not always here yet. Waiting is what the sweep below already
+                    -- does for the same reason; this one used to throw instead, which
+                    -- stopped the cell being told about the generator as well.
+                    local container = isoPb:getContainer()
+                    if container then
+                        container:setAcceptItemFunction("AcceptItemFunction.ISA_Batteries")
+                    end
                     gen:getCell():addToProcessIsoObjectRemove(gen)
                 end
                 table.remove(o.data,i)
@@ -187,15 +194,33 @@ function PBSystem.getGeneratorsInAreaInfo(luaPb, area)
     return generators
 end
 
+--- Show the bank's charge on the batteries it holds.
+---
+--- The container is asked for rather than assumed. A bank reaches a multiplayer client
+--- as an object first and a container a moment later, and the object also outlives its
+--- container when the bank is picked up, so getContainer answers nil often enough that
+--- a client saw this every ten minutes:
+---
+---   attempted index: getItems of non-table: null
+---
+--- What made it worth more than a log line is where it threw. This is one loop over
+--- every bank, so the first one without a container ended the pass, and every bank after
+--- it in the list stopped showing its charge until the next one came round. The bank the
+--- player was standing at looked fine or looked stale depending on nothing they could
+--- see.
+---
+--- Presentation only either way. The charge itself is the server's, and it is written
+--- back into the batteries there on every pass.
 ---FIXME this might run before new data is received, use command instead
 function PBSystem.updateBanksForClient()
     for i=1,PBSystem.instance:getLuaObjectCount() do
         local pb = PBSystem.instance:getLuaObjectByIndex(i)
         local isopb = pb:getIsoObject()
-        if isopb then
+        local container = isopb and isopb:getContainer()
+        if container then
             pb:fromModData(isopb:getModData())
             local delta = pb.maxcapacity > 0 and pb.charge / pb.maxcapacity or 0
-            local items = isopb:getContainer():getItems()
+            local items = container:getItems()
             for v=0,items:size()-1 do
                 local item = items:get(v)
                 --FIXME all items should be valid batteries and drainable here already

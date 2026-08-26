@@ -156,6 +156,7 @@ end
 --condition is an int
 function PowerBank:degradeBatteries(container)
     if sandbox.batteryDegradeChance == 0 then return end
+    if not container then return end
 
     local ZombRand, math = ZombRand, math
     local mod = sandbox.batteryDegradeChance * ZombRand(8, 13) / 1000
@@ -174,7 +175,20 @@ function PowerBank:degradeBatteries(container)
     end
 end
 
+--- Recount what the bank is holding.
+---
+--- Nothing is written when there is no container to read. A bank whose container has
+--- gone, or has not been built yet, is not a bank holding nothing: answering zero would
+--- put maxcapacity at zero, and the charge loop writes that straight back into every
+--- battery on its next pass. The last known figures are wrong for a moment; a zero is
+--- wrong and acted upon.
+---
+--- Guarded here rather than at the four callers, because it is the same answer at all
+--- of them and one of the four had it already.
+---@param container ItemContainer?
 function PowerBank:calculateBatteryStats(container)
+    if not container then return end
+
     local batteries = 0
     local capacity = 0
     local charge = 0

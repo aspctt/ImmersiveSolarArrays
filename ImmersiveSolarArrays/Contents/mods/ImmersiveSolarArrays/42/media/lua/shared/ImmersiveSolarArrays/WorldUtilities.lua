@@ -143,7 +143,18 @@ function WorldUtil.replaceIsoObjectWithGenerator(isoObject)
 
     square:AddSpecialObject(generator, index)
     generator:createContainersFromSpriteProperties()
-    generator:getContainer():setExplored(true)
+    -- The tiledef gives a bank its container, and createContainersFromSpriteProperties
+    -- says nothing when it cannot: no sprite resolved, no container property found, and
+    -- it simply returns. Reaching straight through that used to throw here and abandon
+    -- the rest of this function, which left a generator standing on the square with no
+    -- container, no condition, no fuel and no OnObjectAdded, so the mod never saw it.
+    -- That is the battery bank you cannot open and cannot connect a panel to. Finishing
+    -- the job leaves a bank the chunk load can repair instead of one only a pick up and
+    -- replace could.
+    local container = generator:getContainer()
+    if container then
+        container:setExplored(true)
+    end
     generator:transmitCompleteItemToClients()
     ---these auto transmit, do after sending object
     generator:setCondition(100)
