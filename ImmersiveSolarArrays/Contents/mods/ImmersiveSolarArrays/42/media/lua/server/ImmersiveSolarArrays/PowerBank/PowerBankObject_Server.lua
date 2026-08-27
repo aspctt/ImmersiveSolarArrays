@@ -424,8 +424,16 @@ function PowerBank:disconnectBackupGenerator(generator)
     self:saveData(true)
 end
 
+--- Find a generator near the bank and adopt it as the backup.
+---
+--- One carrying a failsafe wins outright. Without a failsafe on its own square a
+--- generator is a backup that can never be started, so where there are two in reach,
+--- taking the first the scan happens to reach would leave the feature looking dead with
+--- the working machine standing right there. The plain one is still taken when it is the
+--- only one, because the player may not have built the failsafe yet.
 function PowerBank:autoConnectBackup()
     local area = ISA.WorldUtil.getValidBackupArea(3)
+    local withoutFailsafe
 
     self.conGenerator = false
     for ix = self.x - area.radius, self.x + area.radius do
@@ -435,12 +443,19 @@ function PowerBank:autoConnectBackup()
                     local isquare = IsoUtils.DistanceToSquared(self.x,self.y,self.z,ix,iy,iz) <= area.distance and getSquare(ix, iy, iz)
                     local generator = isquare and self.luaSystem:getValidBackupOnSquare(isquare)
                     if generator then
-                        self:connectBackupGenerator(generator)
-                        return
+                        if ISA.WorldUtil.findTypeOnSquare(isquare, "Failsafe") then
+                            self:connectBackupGenerator(generator)
+                            return
+                        end
+                        withoutFailsafe = withoutFailsafe or generator
                     end
                 end
             end
         end
+    end
+
+    if withoutFailsafe then
+        self:connectBackupGenerator(withoutFailsafe)
     end
 end
 
@@ -459,6 +474,29 @@ end
 function PowerBank:updateConGenerator()
     local currentHour = math.floor(getGameTime():getWorldAgeHours())
     if self.lastHour == currentHour then return end
+
+    -- Look for a backup when the bank has none, rather than only at the one moment it
+    -- cannot possibly find one.
+    --
+    -- autoConnectBackup was called from stateFromIsoObject alone, which runs once, when
+    -- the bank first becomes a bank. Nobody sets a generator down before the bank, so
+    -- that call always found nothing, and from then on the only way to connect one was
+    -- the hook on plugging a generator in.
+    --
+    -- That hook searches out from the generator by the electrical skill of whoever
+    -- pulled the plug: radius 1 at Electricity 1, and nothing at all at 0, which is a
+    -- level you can plug a generator in at once you have read the magazine. So a
+    -- generator set down a couple of tiles from a bank, by the wrong person or by the
+    -- right person too early, silently never became its backup, and there was nothing
+    -- to do about it but unplug and plug in again while standing closer.
+    --
+    -- This side asks from the bank instead, at a fixed reach, so it does not matter who
+    -- did it or what they knew. Once an hour, and only while there is nothing recorded.
+    if not self.conGenerator then
+        self:autoConnectBackup()
+        self.lastHour = currentHour
+    end
+
     local conGenerator,square = self:getConGenerator()
     if conGenerator then
 
