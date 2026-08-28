@@ -14,6 +14,16 @@
       DIY battery      takes four wired car batteries again, as in build 41. The beta
                        changed it to a single raw car battery, which left its OnCreate
                        dividing by zero because a raw car battery carries no capacity.
+      flags[ItemCount] on every battery input. A battery is a drainable of UseDelta
+                       0.00001, and CraftRecipeData.getInputCraftCount counts an input
+                       item as getCurrentUses() unless the input says ItemCount, so one
+                       charged battery counted as a hundred thousand. mode:destroy does
+                       not reach that sum, it only suppresses the "Uses" wording in the
+                       widget. Four wired batteries were therefore satisfied by one, and
+                       a flat battery counted as none at all. Vanilla writes the pair
+                       flags[ItemCount] mode:destroy in 187 places for this reason.
+                       Base.BlowTorch is deliberately left counting uses: five of them
+                       is half a torch, not five torches.
 
     Make Solar Panel and Make Inverter are gated behind the enableExpandedRecipes
     sandbox option. Build 41 did that with recipe:setIsHidden, which no longer exists,
@@ -38,7 +48,7 @@ module ISA
         {
             item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
             item 1 [Base.ElectricWire],
-            item 1 tags[base:carbattery] mode:destroy flags[NoBrokenItems],
+            item 1 tags[base:carbattery] mode:destroy flags[NoBrokenItems;ItemCount],
         }
         outputs
         {
@@ -59,7 +69,7 @@ module ISA
         inputs
         {
             item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
-            item 1 [ISA.WiredCarBattery] mode:destroy,
+            item 1 [ISA.WiredCarBattery] mode:destroy flags[ItemCount],
         }
         outputs
         {
@@ -80,7 +90,7 @@ module ISA
         {
             item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
             item 1 [Base.ElectronicsScrap],
-            item 4 [ISA.WiredCarBattery] mode:destroy,
+            item 4 [ISA.WiredCarBattery] mode:destroy flags[ItemCount],
         }
         outputs
         {
@@ -220,7 +230,7 @@ module ISA
             item 1 tags[base:screwdriver] mode:keep flags[Prop1;MayDegradeLight;NoBrokenItems],
             item 2 [Base.ElectricWire],
             item 1 [Base.RemoteCraftedV3],
-            item 4 [ISA.WiredCarBattery] mode:destroy,
+            item 4 [ISA.WiredCarBattery] mode:destroy flags[ItemCount],
         }
         outputs
         {
