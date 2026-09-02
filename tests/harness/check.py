@@ -9,11 +9,13 @@ Usage: python check.py <gameDir> <modRoot> [<modRoot> ...]
 import json
 import os
 import re
+import struct
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 GAME = sys.argv[1]
+NEWLINE = b"\x0a"
 MOD_ROOTS = sys.argv[2:]
 
 problems = []
@@ -587,6 +589,163 @@ if os.path.exists(api_names_file):
                      % (rel(path), name))
 else:
     note("build/api-names.txt not built, method name check skipped")
+
+
+# ---------------------------------------------------------------------------------------
+# Stash houses
+#
+# A stash building and its cache crate are two points on the map written by hand, and
+# neither of them fails loudly when it is wrong.
+#
+# StashSystem builds the crate at contX, contY, contZ with no fallback: given explicit
+# coordinates it calls getGridSquare and, if that answers nil, writes one DebugLog line
+# and carries on. doBuildingStash then stocks every container in the house whose type the
+# spawn table names, but only where the square has a room belonging to that building. So a
+# crate on a floor that does not exist never appears, and a crate outside a room appears
+# empty. Either way the player walks into a stash house holding ordinary loot.
+#
+# Two of the five shipped that way: the Muldraugh crate sat in the gap behind its garage,
+# and the Westpoint crate on a second storey the house does not have.
+#
+# The room rectangles come from the game's own .lotheader files, which is what the engine
+# builds IsoMetaGrid from.
+
+CELL = 256
+
+
+def lotheader_rooms(path):
+    """(name, level, [(x, y, w, h)]) per room, in cell local coordinates.
+
+    LOTH, version, tile count, that many newline terminated tile names, then five ints:
+    width and height in chunks, min and max level, room count. Each room is a newline
+    terminated name, its level, its rectangles, then a count of objects whose records are
+    a fixed width this does not need to read.
+    """
+    with open(path, "rb") as handle:
+        data = handle.read()
+    if data[:4] != b"LOTH":
+        return None
+
+    def ints(offset, n):
+        return struct.unpack_from("<%di" % n, data, offset)
+
+    p = 8
+    tiles = ints(p, 1)[0]
+    p += 4
+    for _ in range(tiles):
+        p = data.index(NEWLINE, p) + 1
+    room_count = ints(p, 5)[4]
+    p += 20
+    if not 0 <= room_count < 20000:
+        return None
+
+    # The object record width is not written down anywhere this can read, so it is
+    # derived: the only size that walks every room without running off the end or landing
+    # on a nonsense rectangle is the right one. Three ints on every build seen so far.
+    for width in (12, 16, 8, 20, 4):
+        try:
+            rooms, q = [], p
+            for _ in range(room_count):
+                end = data.index(NEWLINE, q)
+                name = data[q:end].decode("utf-8", "replace")
+                q = end + 1
+                level, rect_count = ints(q, 2)
+                q += 8
+                if not -32 <= level <= 32 or not 0 <= rect_count < 4096:
+                    raise ValueError
+                rects = []
+                for _ in range(rect_count):
+                    x, y, w, h = ints(q, 4)
+                    q += 16
+                    if not (0 <= x < 4096 and 0 <= y < 4096 and 0 < w < 4096 and 0 < h < 4096):
+                        raise ValueError
+                    rects.append((x, y, w, h))
+                objects = ints(q, 1)[0]
+                q += 4
+                if not 0 <= objects < 100000:
+                    raise ValueError
+                q += objects * width
+                if q > len(data):
+                    raise ValueError
+                rooms.append((name, level, rects))
+        except (ValueError, struct.error):
+            continue
+        return rooms
+    return None
+
+
+_cell_rooms = {}
+
+
+def rooms_in_cell(cx, cy):
+    key = (cx, cy)
+    if key not in _cell_rooms:
+        found = None
+        maps = os.path.join(GAME, "media", "maps")
+        if os.path.isdir(maps):
+            for town in sorted(os.listdir(maps)):
+                candidate = os.path.join(maps, town, "%d_%d.lotheader" % (cx, cy))
+                if os.path.exists(candidate):
+                    found = lotheader_rooms(candidate)
+                    break
+        _cell_rooms[key] = found
+    return _cell_rooms[key]
+
+
+def room_at(x, y, z):
+    """Room name covering this world square, None for open ground, False when unreadable."""
+    rooms = rooms_in_cell(x // CELL, y // CELL)
+    if rooms is None:
+        return False
+    lx, ly = x % CELL, y % CELL
+    for name, level, rects in rooms:
+        if level != z:
+            continue
+        for rx, ry, rw, rh in rects:
+            if rx <= lx < rx + rw and ry <= ly < ry + rh:
+                return name
+    return None
+
+
+stash_file = None
+for root in MOD_ROOTS:
+    for path in walk(root, ".lua"):
+        if os.path.basename(path) == "StashDescriptions.lua":
+            stash_file = path
+
+if stash_file:
+    body = strip_lua_comments(read(stash_file))
+    for block in re.split(r"Stash\.newStash\(", body)[1:]:
+        name = re.search(r'name\s*=\s*"([^"]+)"', block)
+        bx = re.search(r"buildingX\s*=\s*(\d+)", block)
+        by = re.search(r"buildingY\s*=\s*(\d+)", block)
+        if not (name and bx and by):
+            continue
+        name, bx, by = name.group(1), int(bx.group(1)), int(by.group(1))
+
+        counted("stash houses")
+        where = room_at(bx, by, 0)
+        if where is False:
+            note("no .lotheader for %s, its coordinates went unchecked" % name)
+            continue
+        if where is None:
+            fail("stash-building",
+                 "%s: buildingX/buildingY %d,%d is in no room, so the engine finds no "
+                 "building to prepare" % (name, bx, by))
+
+        for cont in re.finditer(
+                r"contX\s*=\s*(\d+)\s*,\s*contY\s*=\s*(\d+)\s*,\s*contZ\s*=\s*(\d+)", block):
+            counted("stash crates")
+            cx, cy, cz = (int(g) for g in cont.groups())
+            if room_at(cx, cy, cz) is False:
+                continue
+            if room_at(cx, cy, cz) is None:
+                levels = [z for z in range(8) if room_at(cx, cy, z)]
+                fail("stash-crate",
+                     "%s: crate at %d,%d,%d is in no room of the house, so it is never "
+                     "stocked%s" % (name, cx, cy, cz,
+                                    " (rooms there at z %s)"
+                                    % ", ".join(str(z) for z in levels) if levels else ""))
 
 
 # ---------------------------------------------------------------------------------------

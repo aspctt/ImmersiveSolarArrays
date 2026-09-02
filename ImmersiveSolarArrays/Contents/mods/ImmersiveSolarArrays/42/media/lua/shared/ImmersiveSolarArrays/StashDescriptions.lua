@@ -87,8 +87,11 @@ local stashMap = Stash.newStash({
     barricades = 40,
     spawnOnlyOnZed = false,
     spawnTable = "ISASolarBoxCache",
+    -- Was 10655,9720, which is outside every room of this house: the garage it belongs
+    -- to is x 10652..10656, y 9711..9715, and 9720 lands in the gap behind it. See the
+    -- note on the Westpoint crate below for why a square outside a room is fatal.
     containers = {
-        { containerType = "SolarBox", containerSprite = "solarmod_tileset_01_36", contX = 10655, contY = 9720, contZ = 0 }
+        { containerType = "SolarBox", containerSprite = "solarmod_tileset_01_36", contX = 10654, contY = 9713, contZ = 0 }
     }
 },
 {
@@ -110,8 +113,20 @@ local stashMap = Stash.newStash({
     barricades = 60,
     spawnOnlyOnZed = true,
     spawnTable = "ISASolarBoxCache",
+    --- The crate square, and what has to be true of it.
+    --- StashSystem builds the crate at contX, contY, contZ with no fallback: given
+    --- explicit coordinates it calls getGridSquare and, if that answers nil, logs a line
+    --- and moves on. Then doBuildingStash fills every container in the house whose type
+    --- the spawn table names, but only where the square has a room and that room belongs
+    --- to this building. A crate outside a room is therefore never stocked even when it
+    --- does appear, which is a stash house holding nothing, with nothing in the log to
+    --- say why.
+    ---
+    --- This was z 1. The house is single storey: its rooms are all at z 0 and the only
+    --- thing above them is roof. So the crate was asked for on a floor that does not
+    --- exist. At z 0 the same x and y is the bedroom, which is where it was meant to be.
     containers = {
-        { containerType = "SolarBox", containerSprite = "solarmod_tileset_01_36", contX = 11577, contY = 6768, contZ = 1 }
+        { containerType = "SolarBox", containerSprite = "solarmod_tileset_01_36", contX = 11577, contY = 6768, contZ = 0 }
     }
 },
 {
