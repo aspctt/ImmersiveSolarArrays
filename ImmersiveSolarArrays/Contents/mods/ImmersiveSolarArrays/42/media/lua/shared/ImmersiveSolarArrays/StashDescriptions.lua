@@ -114,6 +114,7 @@ local stashMap = Stash.newStash({
     spawnOnlyOnZed = true,
     spawnTable = "ISASolarBoxCache",
     --- The crate square, and what has to be true of it.
+    ---
     --- StashSystem builds the crate at contX, contY, contZ with no fallback: given
     --- explicit coordinates it calls getGridSquare and, if that answers nil, logs a line
     --- and moves on. Then doBuildingStash fills every container in the house whose type
