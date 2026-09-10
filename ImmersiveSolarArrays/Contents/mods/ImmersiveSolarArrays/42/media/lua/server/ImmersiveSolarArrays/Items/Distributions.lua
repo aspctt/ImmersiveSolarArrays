@@ -15,21 +15,24 @@ local vehDist = VehicleDistributions
 
 ISA.Distributions = {}
 
-local function insertRecursive(insertKey,insertInto,insertFrom,default)
-    for key,value in pairs(insertFrom) do
-        local _insertInto = insertInto[key]
-        if not _insertInto and default then
-            _insertInto = copyTable(default)
-            insertInto[key] = _insertInto
-        end
-        if type(_insertInto) == "table" then
-            if key == insertKey then
-                for _,i in ipairs(value) do
-                    table.insert(_insertInto,i)
-                end
-            else
-                insertRecursive(insertKey,_insertInto,value,default)
+--- Append every insertKey list in insertFrom to the matching list in insertInto.
+---
+--- Only tables that already exist are extended. A room or container the game does not
+--- have is printed and skipped, because the vanilla room tables change between builds
+--- and an insert aimed at a key that is gone otherwise goes nowhere without a trace.
+--- Build 42 did exactly that to most of the inserts below.
+local function insertRecursive(insertKey, insertInto, insertFrom, path)
+    for key, value in pairs(insertFrom) do
+        local where = path and (path .. "." .. key) or key
+        local target = insertInto[key]
+        if type(target) ~= "table" then
+            print("ISA: no loot table " .. where .. ", skipped")
+        elseif key == insertKey then
+            for _, entry in ipairs(value) do
+                table.insert(target, entry)
             end
+        else
+            insertRecursive(insertKey, target, value, where)
         end
     end
 end
@@ -104,14 +107,25 @@ subDist.ISASolarBoxCache.isStore = nil
 subDist.ISASolarBoxCache.SolarBox = copyTable(pdList.ISASolarBox)
 subDist.ISASolarBoxCache.SolarBox.rolls = 32
 
+--- The stash room is the spawn table for the five stash houses, and
+--- StashSystem.doBuildingStash stocks only the containers whose type is a key here. It
+--- also marks the whole building explored, so every other container in the house stays
+--- empty. The cache entries below were written for crate and metal_shelves keys, and the
+--- build 42 electronicsstorage this is copied from has neither, so they had no table to
+--- land in and a stash house's own crates and shelves came up bare. The keys are created
+--- here so those containers carry the cache loot they were written to.
+subDist.ISASolarBoxCache.crate = { procedural = true, procList = {} }
+subDist.ISASolarBoxCache.metal_shelves = { procedural = true, procList = {} }
+
+--- Container keys are the ones each room has in build 42. Where an entry was written for a
+--- crate or metal_shelves key the room does not have, it moved to one it does:
+---   electronicsstorage  no crate or metal_shelves, only "other", which ItemPickerJava
+---                       falls back to for a container the room does not name
+---   storageunit         only toolcabinet, so the crate and shelf entries became one
+---   warehouse           no crate, so its entries sit on the metal shelves instead
 insertRecursive("procList", subDist, {
     electronicsstorage = {
-        metal_shelves = {
-            procList = {
-                { name = "ISASolarBox", min = 0, max = 1, weightChance = 10 },
-            },
-        },
-        crate = {
+        other = {
             procList = {
                 { name = "ISASolarBox", min = 0, max = 1, weightChance = 20 },
                 { name = "ISABatteries", min = 0, max = 1, weightChance = 5 },
@@ -127,19 +141,14 @@ insertRecursive("procList", subDist, {
         },
     },
     storageunit = {
-        crate = {
+        toolcabinet = {
             procList = {
                 { name = "ISASolarBox", min = 0, max = 1, weightChance = 5 },
             },
         },
-        metal_shelves = {
-            procList = {
-                { name = "ISASolarBox", min = 0, max = 1, weightChance = 3 },
-            }
-        }
     },
     warehouse = {
-        crate = {
+        metal_shelves = {
             procList = {
                 { name = "ISASolarBox", min = 0, max = 1, weightChance = 5 },
                 { name = "ISABatteries", min = 0, max = 1, weightChance = 5 },

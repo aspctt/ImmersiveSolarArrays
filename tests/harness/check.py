@@ -11,6 +11,7 @@ import os
 import re
 import struct
 import sys
+import zipfile
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -589,6 +590,124 @@ if os.path.exists(api_names_file):
                      % (rel(path), name))
 else:
     note("build/api-names.txt not built, method name check skipped")
+
+
+# ---------------------------------------------------------------------------------------
+# Globals
+#
+# Every capitalised name the mod reads a field or a method from, `Name.x` or `Name:x`, has
+# to exist at runtime: a class the engine exposes to Lua, a global the game or the mod
+# assigns in Lua, or a local, parameter or loop variable of the same file.
+#
+# InventoryItemFactory is a real Java class, and build 42 does not expose it, so
+# InventoryItemFactory.CreateItem indexes nil. Unwire Car Battery called it from its
+# OnCreate, which ISHandcraftAction runs after the engine has destroyed the inputs, so
+# every unwire ate the battery and gave nothing back. The method name check above cannot
+# see this: CreateItem is still a method in the API, only on a class Lua cannot reach.
+#
+# The exposed classes are the ones LuaManager$Exposer refers to, read out of its constant
+# pool. The pool also holds the few classes the exposer uses for its own work, which only
+# lets a name through that should not be. A class exposed from somewhere else would show
+# up here as a failure, which is the safe way round to be wrong.
+#
+# Events is the one table the engine builds rather than exposing a class for it:
+# LuaEventManager.register sets it.
+
+ENGINE_TABLES = {"Events"}
+
+
+def jar_class_refs(data):
+    """Internal names of every class a class file's constant pool refers to."""
+    count = struct.unpack_from(">H", data, 8)[0]
+    p, i = 10, 1
+    utf8, classes = {}, []
+    while i < count:
+        tag = data[p]
+        if tag == 1:
+            n = struct.unpack_from(">H", data, p + 1)[0]
+            utf8[i] = data[p + 3:p + 3 + n].decode("utf-8", "replace")
+            p += 3 + n
+        elif tag in (3, 4):
+            p += 5
+        elif tag in (5, 6):
+            # Longs and doubles take two slots in the pool.
+            p += 9
+            i += 1
+        elif tag == 7:
+            classes.append(struct.unpack_from(">H", data, p + 1)[0])
+            p += 3
+        elif tag in (8, 16, 19, 20):
+            p += 3
+        elif tag in (9, 10, 11, 12, 17, 18):
+            p += 5
+        elif tag == 15:
+            p += 4
+        else:
+            raise ValueError("unknown constant pool tag %d" % tag)
+        i += 1
+    return [utf8[c] for c in classes]
+
+
+# Comments and string literals both go, so "Base.CarBattery1" is not read as a table
+# called Base. Strings before line comments, so a -- inside a string survives.
+def strip_lua_text(text):
+    text = re.sub(r"--\[(=*)\[.*?\]\1\]", "", text, flags=re.S)
+    text = re.sub(r"\[(=*)\[.*?\]\1\]", '""', text, flags=re.S)
+    text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
+    text = re.sub(r"'(?:\\.|[^'\\\n])*'", '""', text)
+    return re.sub(r"--[^\n]*", "", text)
+
+
+def file_locals(body):
+    names = set(re.findall(r"\blocal\s+function\s+(\w+)", body))
+    lists = re.findall(r"\blocal\s+(?!function\b)([\w\s,]+?)\s*(?:=|$|\n|;)", body)
+    lists += re.findall(r"\bfunction\b[^(\n]*\(([^)]*)\)", body)
+    lists += re.findall(r"\bfor\s+([\w\s,]+?)\s+in\b", body)
+    for group in lists:
+        names.update(n.strip() for n in group.split(",") if n.strip())
+    names.update(re.findall(r"\bfor\s+(\w+)\s*=", body))
+    return names
+
+
+jar_path = os.path.join(GAME, "projectzomboid.jar")
+exposer = None
+if os.path.exists(jar_path):
+    with zipfile.ZipFile(jar_path) as jar:
+        if "zombie/Lua/LuaManager$Exposer.class" in jar.namelist():
+            exposer = jar.read("zombie/Lua/LuaManager$Exposer.class")
+
+if exposer is None:
+    fail("global-name", "no LuaManager$Exposer in %s, cannot tell which classes Lua reaches"
+         % jar_path)
+else:
+    exposed = set()
+    for name in jar_class_refs(exposer):
+        if not name.startswith("["):
+            exposed.add(name.split("/")[-1].split("$")[-1])
+
+    global_assign = re.compile(r"^\s*([A-Za-z_]\w*)\s*=(?!=)", re.M)
+    global_function = re.compile(r"(?<!local )\bfunction\s+([A-Za-z_]\w*)\s*[.:(]")
+
+    lua_globals = set(ENGINE_TABLES)
+    game_lua = []
+    for folder in ("client", "server", "shared"):
+        game_lua.extend(walk(os.path.join(GAME, "media", "lua", folder), ".lua"))
+    mod_bodies = {}
+    for path in game_lua + MOD_LUA:
+        body = strip_lua_text(read(path))
+        lua_globals.update(global_assign.findall(body))
+        lua_globals.update(global_function.findall(body))
+        mod_bodies[path] = body
+
+    root = re.compile(r"(?<![\w.:])([A-Z]\w*)\s*(?:\.(?!\.)|:)")
+    for path in MOD_LUA:
+        body = mod_bodies[path]
+        here = file_locals(body)
+        for name in sorted(set(root.findall(body))):
+            counted("global roots")
+            if name not in exposed and name not in lua_globals and name not in here:
+                fail("global-name", "%s: %s is not a class Lua can reach or a global "
+                     "anything defines" % (rel(path), name))
 
 
 # ---------------------------------------------------------------------------------------

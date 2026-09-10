@@ -45,21 +45,6 @@ local function roundToNumber(x, n)
     return math.ceil(x / n - 0.5) * n
 end
 
---- Mirrors ISCraftAction:addOrDropItem, which is not reachable from a recipe hook.
-local function addOrDrop(character, item)
-    local inv = character:getInventory()
-    if inv:getCapacityWeight() + item:getWeight() < inv:getEffectiveCapacity(character) then
-        inv:AddItem(item)
-    else
-        local square = character:getCurrentSquare()
-        if square then
-            square:AddWorldInventoryItem(item, character:getX() % 1, character:getY() % 1, 0)
-        else
-            inv:AddItem(item)
-        end
-    end
-end
-
 --- First consumed input matching a predicate. Consumed covers every non-keep input, so
 --- the wire and the screwdriver turn up here too and have to be filtered out.
 local function findConsumed(craftRecipeData, predicate)
@@ -136,12 +121,22 @@ end
 
 --- The recipe has no output, because which car battery comes back depends on what was
 --- wired in the first place.
+---
+--- The battery is made with instanceItem. This used InventoryItemFactory.CreateItem,
+--- and that class is not exposed to Lua in build 42, so the hook threw on a nil global.
+--- ISHandcraftAction calls OnCreate after the engine has already destroyed the inputs,
+--- which left the player with neither the wired battery nor a car battery.
+---
+--- Actions.addOrDropItem is the helper ISHandcraftAction hands its own outputs to. In
+--- multiplayer this hook runs on the server, and an item added there only reaches the
+--- client through sendAddItemToContainer, which the helper calls. Everything is set on
+--- the battery before it is handed over.
 function ISARecipes.OnCreate.unwireCarBattery(craftRecipeData, character)
     local wiredBattery = findConsumed(craftRecipeData, isWiredBattery)
     if not wiredBattery then return end
 
     local oldData = wiredBattery:getModData()
-    local item = InventoryItemFactory.CreateItem(oldData.unwiredType or "Base.CarBattery1")
+    local item = instanceItem(oldData.unwiredType or "Base.CarBattery1")
     if not item then return end
 
     if oldData.unwiredData then
@@ -154,9 +149,8 @@ function ISARecipes.OnCreate.unwireCarBattery(craftRecipeData, character)
     local skillMod = math.min(10, ZombRand(1 + character:getPerkLevel(Perks.Electricity)))
     item:setCurrentUsesFloat(wiredBattery:getCurrentUsesFloat())
     item:setCondition(wiredBattery:getCondition() - ZombRand(1, 12 - skillMod))
-    item:syncItemFields()
 
-    addOrDrop(character, item)
+    Actions.addOrDropItem(character, item)
 end
 
 --- Capacity of the DIY battery is what went into it, scaled by the sandbox multiplier.
@@ -189,6 +183,9 @@ function ISARecipes.OnCreate.createDiyBattery(craftRecipeData, character)
 end
 
 --- Taking a panel apart returns the mounting hardware, but only if it had any.
+---
+--- Each batch is passed to sendAddItemsToContainer. In multiplayer this hook runs on the
+--- server, and items added to an inventory there are not sent to the client on their own.
 function ISARecipes.OnCreate.reverseSolarPanel(craftRecipeData, character)
     local panel = findConsumed(craftRecipeData, function(item)
         return ISARecipes.panelItems[item:getFullType()] ~= nil
@@ -202,10 +199,10 @@ function ISARecipes.OnCreate.reverseSolarPanel(craftRecipeData, character)
     end
 
     local inventory = character:getInventory()
-    inventory:AddItems("Base.ElectricWire", 2)
+    sendAddItemsToContainer(inventory, inventory:AddItems("Base.ElectricWire", 2))
     if kind ~= "flat" then
-        inventory:AddItems("Base.MetalBar", 3)
-        inventory:AddItems("Base.Screws", 2)
+        sendAddItemsToContainer(inventory, inventory:AddItems("Base.MetalBar", 3))
+        sendAddItemsToContainer(inventory, inventory:AddItems("Base.Screws", 2))
     end
 end
 
