@@ -38,7 +38,7 @@ nothing, and a tag no item carries makes a recipe quietly impossible to perform.
 | `item-tag` | Item tags are namespaced. Tag strings are compared literally after lowercasing, so a bare `Generator` matches nothing. |
 | `recipe-tag` | Every `tags[...]` query in a recipe names a tag some item carries. |
 | `recipe-item` | Every recipe input and output is a real script item. |
-| `recipe-hook` | `OnCreate` and `OnTest` point at something the mod defines, or at one of the engine's exposed classes. |
+| `recipe-hook` | `OnCreate` and `OnTest` point at something the mod defines, or at one of the engine's exposed classes. `OnAddToMenu` names a plain global function: the crafting window fetches it with one `rawget` on the global table, so a dotted path resolves to nil and the recipe silently drops out of the list. |
 | `recipe-name` | A recipe name doubles as its translation key, so each one has a `Recipes.json` entry. |
 | `learned-recipe` | A magazine only teaches recipes that exist. |
 | `sandbox-type` | Option types are among the five the parser accepts. |

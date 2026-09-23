@@ -26,8 +26,10 @@
                        is half a torch, not five torches.
 
     Make Solar Panel and Make Inverter are gated behind the enableExpandedRecipes
-    sandbox option. Build 41 did that with recipe:setIsHidden, which no longer exists,
-    so the gate is an OnTest that rejects every candidate item while the option is off.
+    sandbox option. Build 41 did that with recipe:setIsHidden, which no longer exists.
+    OnAddToMenu keeps them out of the crafting window while the option is off, and an
+    OnTest that rejects every candidate item keeps them from being performed at all. The
+    OnTest alone left them listed as missing items the player was plainly holding.
 */
 module ISA
 {
@@ -246,6 +248,7 @@ module ISA
         NeedToBeLearn = true,
         SkillRequired = Electricity:5,
         OnTest = ISARecipes.OnTest.expandedRecipes,
+        OnAddToMenu = ISA_ExpandedRecipesInMenu,
         Tags = AnySurfaceCraft,
         inputs
         {
@@ -271,6 +274,7 @@ module ISA
         NeedToBeLearn = true,
         SkillRequired = Electricity:5,
         OnTest = ISARecipes.OnTest.expandedRecipes,
+        OnAddToMenu = ISA_ExpandedRecipesInMenu,
         Tags = AnySurfaceCraft,
         inputs
         {

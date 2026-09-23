@@ -420,6 +420,19 @@ for path in MOD_SCRIPTS:
                 fail("recipe-hook", "%s: %s = %s is not defined in the mod's Lua"
                      % (rel(path), hook, target))
 
+    # OnAddToMenu is fetched with callLuaBool, a single rawget on the global table, so a
+    # dotted path never resolves: the crafting window then calls nil and hides the recipe.
+    for match in re.finditer(r"OnAddToMenu\s*=\s*([A-Za-z0-9_.]+)", body):
+        counted("menu hooks")
+        target = match.group(1)
+        if "." in target:
+            fail("recipe-hook", "%s: OnAddToMenu = %s is a dotted path, and the engine only "
+                 "looks up a plain global name" % (rel(path), target))
+        elif not re.search(r"(?m)^function\s+%s\s*\(" % re.escape(target), lua_body) \
+             and not re.search(r"(?m)^%s\s*=\s*function\b" % re.escape(target), lua_body):
+            fail("recipe-hook", "%s: OnAddToMenu = %s is not a global function in the mod's Lua"
+                 % (rel(path), target))
+
     # Recipe names double as translation keys.
     for match in re.finditer(r"^\s*craftRecipe\s+([A-Za-z0-9_]+)", body, flags=re.M):
         counted("craft recipes")

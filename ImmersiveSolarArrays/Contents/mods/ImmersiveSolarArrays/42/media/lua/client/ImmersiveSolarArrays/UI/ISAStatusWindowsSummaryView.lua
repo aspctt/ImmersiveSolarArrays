@@ -3,48 +3,53 @@ local isa = require "ImmersiveSolarArrays/Utilities"
 
 local ISAWindowsSumaryTab = ISPanelJoypad:derive("ISAWindowsSumaryTab")
 
+--- The tab as it was drawn: a 580 by 390 panel, the summary box in the top right corner
+--- and each piece of artwork at a fixed x, y, width and height around it.
+local DESIGN_WIDTH, DESIGN_HEIGHT = 580, 390
+local ART = {
+	house = { 321, 185, 254, 185 },
+	cables = { 52, 358, 403, 24 },
+	battery = { 16, 302, 76, 69 },
+	batteryCross = { 17, 305, 72, 72 },
+	sun = { 0, 0, 128, 128 },
+	moon = { 0, 0, 128, 128 },
+	solarPanel = { 123, 267, 155, 103 },
+	solarPanelCross = { 166, 268, 72, 72 },
+}
+--- Room left between the bottom of the summary box and the artwork under it.
+local ART_GAP = 8
+
+--- One piece of artwork, placed where layout moved the whole picture to.
+---@param texture Texture
+---@param rect table x, y, width, height, as in ART
+---@return ISImage
+function ISAWindowsSumaryTab:addArt(texture, rect)
+	local image = ISImage:new(self.artX + rect[1], self.artY + rect[2], rect[3], rect[4], texture)
+	image.scaledWidth = rect[3]
+	image.scaledHeight = rect[4]
+	image:initialise()
+	image.parent = self
+	self:addChild(image)
+	return image
+end
+
 function ISAWindowsSumaryTab:initialise()
 	ISPanelJoypad.initialise(self)
 
 	-- House
-	self.imageHouse = ISImage:new(321, 185, 254, 185, self.textureHouse)
-	self.imageHouse.scaledWidth = 254
-	self.imageHouse.scaledHeight = 185
-	self.imageHouse:initialise()
-	self.imageHouse.parent = self
-    self:addChild(self.imageHouse)
+	self.imageHouse = self:addArt(self.textureHouse, ART.house)
 
 	-- Cables
-	self.imageCables = ISImage:new(52, 358, 403, 24, self.textureCables)
-	self.imageCables.scaledWidth = 403
-	self.imageCables.scaledHeight = 24
-	self.imageCables:initialise()
-	self.imageCables.parent = self
-    self:addChild(self.imageCables)
+	self.imageCables = self:addArt(self.textureCables, ART.cables)
 
 	-- Battery
-	self.imageBattery = ISImage:new(16, 302, 76, 69, self.textureBattery)
-	self.imageBattery.scaledWidth = 76
-	self.imageBattery.scaledHeight = 69
-	self.imageBattery:initialise()
-	self.imageBattery.parent = self
+	self.imageBattery = self:addArt(self.textureBattery, ART.battery)
 	--self.imageBattery:setMouseOverText("Test")
-    self:addChild(self.imageBattery)
 
-	self.imageBatteryCross = ISImage:new(17, 305, 72, 72, self.textureCross)
-	self.imageBatteryCross.scaledWidth = 72
-	self.imageBatteryCross.scaledHeight = 72
-	self.imageBatteryCross:initialise()
-	self.imageBatteryCross.parent = self
-    self:addChild(self.imageBatteryCross)
+	self.imageBatteryCross = self:addArt(self.textureCross, ART.batteryCross)
 
 	-- Sun and radiation
-	self.imageSun = ISImage:new(0, 0, 128, 128, self.textureSun)
-	self.imageSun.scaledWidth = 128
-	self.imageSun.scaledHeight = 128
-	self.imageSun:initialise()
-	self.imageSun.parent = self
-    self:addChild(self.imageSun)
+	self.imageSun = self:addArt(self.textureSun, ART.sun)
 
 --[[
 	self.imageSolarRadiation1 = ISImage:new(81, 122, 93, 78, self.textureSolarRadiation)
@@ -77,35 +82,15 @@ function ISAWindowsSumaryTab:initialise()
 	]]
 
 	-- Moon
-	self.imageMoon = ISImage:new(0, 0, 128, 128, self.textureMoon)
-	self.imageMoon.scaledWidth = 128
-	self.imageMoon.scaledHeight = 128
-	self.imageMoon:initialise()
-	self.imageMoon.parent = self
-    self:addChild(self.imageMoon)
+	self.imageMoon = self:addArt(self.textureMoon, ART.moon)
 
 	-- Solar Panel (two modes)
-	self.imageSolarPanel = ISImage:new(123, 267, 155, 103, self.textureSolarPanel)
-	self.imageSolarPanel.scaledWidth = 155
-	self.imageSolarPanel.scaledHeight = 103
-	self.imageSolarPanel:initialise()
-	self.imageSolarPanel.parent = self
-    self:addChild(self.imageSolarPanel)
+	self.imageSolarPanel = self:addArt(self.textureSolarPanel, ART.solarPanel)
 	self.imageSolarPanel:setVisible(false)
 
-	self.imageSolarPanelNoEnergy = ISImage:new(123, 267, 155, 103, self.textureSolarPanelNoEnergy)
-	self.imageSolarPanelNoEnergy.scaledWidth = 155
-	self.imageSolarPanelNoEnergy.scaledHeight = 103
-	self.imageSolarPanelNoEnergy:initialise()
-	self.imageSolarPanelNoEnergy.parent = self
-    self:addChild(self.imageSolarPanelNoEnergy)
+	self.imageSolarPanelNoEnergy = self:addArt(self.textureSolarPanelNoEnergy, ART.solarPanel)
 
-	self.imageSolarPanelCross = ISImage:new(166, 268, 72, 72, self.textureCross)
-	self.imageSolarPanelCross.scaledWidth = 72
-	self.imageSolarPanelCross.scaledHeight = 72
-	self.imageSolarPanelCross:initialise()
-	self.imageSolarPanelCross.parent = self
-    self:addChild(self.imageSolarPanelCross)
+	self.imageSolarPanelCross = self:addArt(self.textureCross, ART.solarPanelCross)
 
 	-- Fix the daytime/nightime icon
 	if isa.isDayTime() then
@@ -127,8 +112,8 @@ end
 function ISAWindowsSumaryTab:setVisible(visible)
     self.javaObject:setVisible(visible)
 	if visible then
-		self:setWidthAndParentWidth(580)
-		self:setHeightAndParentHeight(390)
+		self:setWidthAndParentWidth(self.viewWidth)
+		self:setHeightAndParentHeight(self.viewHeight)
 		self.currentFrame = 0
 	end
 end
@@ -208,11 +193,11 @@ function ISAWindowsSumaryTab:render()
 	end
 
 	-- Summary box
-	local line = getTextManager():getFontHeight(UIFont.Small)
-	local rectX, rectY, rectW, rectH = self.sumBox.x, 20, self.sumBox.width, 25 + line * 6
+	local line = self.sumBox.line
+	local rectX, rectY, rectW, rectH = self.sumBox.x, self.sumBox.y, self.sumBox.width, self.sumBox.height
 	local text_x = self.sumBox.textX
 	local text_x2 = text_x + self.sumBox.pad1
-	local text_y = 30
+	local text_y = rectY + 10
 	self:drawRect(rectX, rectY, rectW, rectH, 0.5, 0.16, 0.16, 0.16)
 	self:drawRectBorder(rectX, rectY, rectW, rectH, 1, 1, 1, 1)
 
@@ -290,35 +275,7 @@ function ISAWindowsSumaryTab:new(x, y, width, height)
 	o.textureSun = getTexture("media/ui/isa_sun.png")
 	o.textureMoon = getTexture("media/ui/isa_moon.png")
 
-	local maxMeasured = o.measureTexts()
-	local maxLR = maxMeasured.left + maxMeasured.right
-	o.sumBox = {}
-	if maxLR > 580 then -- resize?
-		o.sumBox.x = 0
-		o.sumBox.width = 580
-		o.sumBox.pad1 = 1
-		o.sumBox.textX = maxMeasured.left
-	elseif maxLR > 570 then
-		o.sumBox.x = 0
-		o.sumBox.width = 580
-		o.sumBox.pad1 = 580 - maxLR
-		o.sumBox.textX = maxMeasured.left
-	elseif maxLR > 530 then
-		o.sumBox.x = 0
-		o.sumBox.width = 580
-		o.sumBox.pad1 = 10
-		o.sumBox.textX = maxMeasured.left + math.floor((570-maxLR) / 2)
-	elseif maxLR > 490 then
-		o.sumBox.x = math.floor((570 - maxLR) / 2)
-		o.sumBox.width = maxLR + 50
-		o.sumBox.pad1 = 10
-		o.sumBox.textX = o.sumBox.x + 20 + maxMeasured.left
-	else
-		o.sumBox.x = 510 - maxLR
-		o.sumBox.width = maxLR + 50
-		o.sumBox.pad1 = 10
-		o.sumBox.textX = o.sumBox.x + 20 + maxMeasured.left
-	end
+	o:layout()
 
 	-- Used variables
 	o.currentFrame = 0
@@ -333,6 +290,42 @@ function ISAWindowsSumaryTab:new(x, y, width, height)
 
 	o.fps = getCore():getOptionUIRenderFPS()
    return o
+end
+
+--- Fit the summary box to the font, then move the artwork clear of it.
+---
+--- The tab was laid out in fixed pixels for the 19 pixel font. The box is six lines of
+--- text tall, so it grew with the font while the artwork stayed where it was, and the
+--- artwork is drawn over the box. The game's default font setting scales with the
+--- window: 19 pixels at 1080 lines, 26 at 1440, where the house already covered the
+--- bottom of the box. At 33 and 38 pixels it covered the last lines of text, and the sun
+--- the left end of the box. A language with longer text was squeezed into 580 pixels
+--- rather than widening the tab.
+---
+--- The box keeps its old place against the right edge, and the tab widens when the box
+--- needs more room. The artwork then moves down as one picture, just far enough that no
+--- piece of it overlaps the box, so at the smallest font nothing moves at all.
+function ISAWindowsSumaryTab:layout()
+	local line = getTextManager():getFontHeight(UIFont.Small)
+	local maxMeasured = self.measureTexts()
+	local maxLR = maxMeasured.left + maxMeasured.right
+
+	local box = { y = 20, width = maxLR + 50, height = 25 + line * 6, line = line, pad1 = 10 }
+	self.viewWidth = math.max(DESIGN_WIDTH, box.width + 30)
+	box.x = self.viewWidth - 20 - box.width
+	box.textX = box.x + 20 + maxMeasured.left
+	self.sumBox = box
+
+	self.artX = math.floor((self.viewWidth - DESIGN_WIDTH) / 2)
+	self.artY = 0
+	local clear = box.y + box.height + ART_GAP
+	for _, rect in pairs(ART) do
+		local left = self.artX + rect[1]
+		if left < box.x + box.width and left + rect[3] > box.x then
+			self.artY = math.max(self.artY, clear - rect[2])
+		end
+	end
+	self.viewHeight = DESIGN_HEIGHT + self.artY
 end
 
 function ISAWindowsSumaryTab.measureTexts()

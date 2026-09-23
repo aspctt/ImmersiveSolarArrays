@@ -64,18 +64,25 @@ local function solarscan(square, LimitedScan, IsBank, InitialScan, backupgenerat
 ----print("running solar scan")
 --square is the square of the solar panel, increment, limitedscan is if we should only scan for panels not do anything else, IsBank: false if scan is coming from solar panel, true if coming from a battery bank, initial scan true when object first placed
 --backupgenerator is normally 0, 1 wehn turning on a generator and 2 when turning off one
-local n = square:getX() - 20;
-local n2 = square:getX() + 20;
-local n3 = square:getY() - 20;
-local n4 = square:getY() + 20;
-local bottom = math.max(0, square:getZ() - 3);
-local top = math.min(8, square:getZ() + 3);
+-- The ground the bank really powers, read the way the engine reads it. Every generator
+-- shares one radius, the game's Generator tile range, and reaches its vertical range up and
+-- down within levels -32 to 31 (IsoGenerator.isPoweringSquare). This used a fixed 20 tiles
+-- and 3 levels on floors 0 to 8, so any other range billed devices the bank does not power,
+-- or powered devices it never billed, and a basement was never counted at all.
+local radius = SandboxVars.GeneratorTileRange or 20;
+local levels = SandboxVars.GeneratorVerticalPowerRange or 3;
+local n = square:getX() - radius;
+local n2 = square:getX() + radius;
+local n3 = square:getY() - radius;
+local n4 = square:getY() + radius;
+local bottom = math.max(-32, square:getZ() - levels);
+local top = math.min(31, square:getZ() + levels);
 local powerconsumption = 0;
 local numberofpanels = 0;
 for x = bottom, top do
 	for j = n, n2 do
 		for k = n3, n4 do
-			if IsoUtils.DistanceToSquared(j + 0.5, k + 0.5, square:getX() + 0.5, square:getY() + 0.5) <= 400.0 then
+			if IsoUtils.DistanceToSquared(j + 0.5, k + 0.5, square:getX() + 0.5, square:getY() + 0.5) <= radius * radius then
 			local mysquare = square:getCell():getGridSquare(j, k, x);
 				if mysquare ~= nil then			
 				if IsBank == true then

@@ -219,9 +219,25 @@ function ISARecipes.OnTest.solarPanelMoveable(item, character)
     return ISARecipes.panelSprites[item:getWorldSprite()] ~= nil
 end
 
---- Build 41 hid these two behind recipe:setIsHidden, which build 42 has no equivalent
---- for. Failing the test leaves them visible but unperformable while the option is off.
+--- Make Solar Panel and Make Inverter, while the Expanded Recipes option is off. Every
+--- item fails, so the recipe cannot be performed and the item context menu leaves it out.
+--- The crafting window would still list it, as needing items the player is holding, which
+--- is what OnAddToMenu below is for.
 function ISARecipes.OnTest.expandedRecipes(item, character)
+    return SandboxVars.ISA.enableExpandedRecipes == true
+end
+
+----------------------------------------------------------------------------------------
+--- OnAddToMenu
+---
+--- The crafting window asks this before it lists a recipe, and leaves the recipe out on
+--- anything but true. Build 41 hid these two behind recipe:setIsHidden, which build 42
+--- does not have.
+---
+--- It is a global of its own rather than a field of ISARecipes. The window calls it
+--- through callLuaBool, which fetches the name with a single rawget on the global table
+--- and does not walk a dotted path the way OnCreate and OnTest are resolved.
+function ISA_ExpandedRecipesInMenu(params)
     return SandboxVars.ISA.enableExpandedRecipes == true
 end
 
